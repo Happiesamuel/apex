@@ -1,8 +1,7 @@
+import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { createUser, getUsersByEmail, updateUser } from "./action";
-import NextAuth from "next-auth";
-import { generateAccountNumber } from "./utils";
+import { getUsersByEmail } from "./action";
 
 const authConfig = {
   providers: [
@@ -10,7 +9,6 @@ const authConfig = {
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
-
     Credentials({
       credentials: {
         username: {
@@ -30,7 +28,6 @@ const authConfig = {
           if (!existingUser) {
             throw new Error("User not found.");
           }
-
           return {
             id: existingUser["$id"],
             name: existingUser.fullName,
@@ -49,7 +46,7 @@ const authConfig = {
     async signIn({ user }) {
       try {
         const existedUser = await getUsersByEmail(user.email);
-        if (!existedUser)
+        if (!existedUser) {
           await createUser({
             email: user.email,
             fullName: user.name,
@@ -61,9 +58,8 @@ const authConfig = {
             image: user.image,
             nationality: "",
           });
-        // if (existedUser) {
-        //   await updateUser(existedUser["$id"], { image: user.image });
-        // }
+        }
+
         return true;
       } catch {
         return false;
@@ -77,31 +73,13 @@ const authConfig = {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      // if (typeof window !== "undefined") {
-      //   console.log(session, "ssjj");
-
-      //   try {
-      //     const users = await getUser(session.user.email);
-      //     session.user.userId = users.id;
-      //     console.log(session, "ppppjj");
-      //   } catch (error) {
-      //     console.log(session, "kkkkk");
-
-      //     console.error("Error fetching user data:", error);
-      //   }
-      // }
 
       return session;
     },
   },
   pages: {
-    signIn: "/sign-in",
+    signIn: "/auth/sign-in",
   },
 };
 
-export const {
-  auth,
-  signIn,
-  signOut,
-  handlers: { GET, POST },
-} = NextAuth(authConfig);
+export const { auth, signIn, signOut, handlers } = NextAuth(authConfig);

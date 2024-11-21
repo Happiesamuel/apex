@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import apexLogo from "@/../public/asset/apex-logo.png";
 function AuthHeader() {
   const pathname = usePathname();
-  const type = pathname.slice(1);
+  const type = pathname.split("/").at(2);
   return (
     <div>
       <div className="flex flex-col items-center">

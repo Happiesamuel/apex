@@ -1,12 +1,12 @@
 "use server";
 
-import { signIn, signOut } from "./auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "./appwrite";
 import { parseStringify } from "./utils";
 import { object } from "zod";
+import { signIn, signOut } from "./auth";
 
 export async function signOutAction() {
   await signOut({ redirectTo: "/" });
@@ -15,9 +15,7 @@ export async function signInWithGoogleAction() {
   await signIn("google", { redirectTo: "/account" });
 }
 export async function signInWithCredentials(data) {
-  await signIn("credentials", data, {
-    redirectTo: "/account",
-  });
+  await signIn("credentials", data);
 }
 
 export async function getUsers() {

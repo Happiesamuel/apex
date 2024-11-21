@@ -65,8 +65,8 @@ export function SigninForm({ type }) {
             description: "You've sign up  successfully",
             title: "Sign-up message",
           });
-          router.replace("/user/sign-in");
-          redirect("/user/sign-in");
+          router.replace("/auth/sign-in");
+          redirect("/auth/sign-in");
         }
       }
       if (type === "sign-in") {
@@ -84,7 +84,7 @@ export function SigninForm({ type }) {
           });
         } else {
           console.log({ ...values });
-          await signInWithCredentials({ ...values });
+          signInWithCredentials({ ...values });
           Toast({
             description: "You've Logged in successfully",
             title: "Sign-in message",
@@ -111,8 +111,8 @@ export function SigninForm({ type }) {
             title: "You've successfully reset yout password",
           });
         }
-        router.replace("/user/sign-in");
-        redirect("/user/sign-in");
+        router.replace("/auth/sign-in");
+        redirect("/auth/sign-in");
       }
 
       setLoading(false);
