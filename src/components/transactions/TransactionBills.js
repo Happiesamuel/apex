@@ -7,6 +7,9 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { allTransactions } from "@/lib/utils";
 import { useGetDebitTransactions } from "@/hooks/useGetDebitTransactions";
 import { useGetCreditTransactions } from "@/hooks/useGetCreditTransactions";
+import { MoonLoader } from "react-spinners";
+import { TbReceiptOff } from "react-icons/tb";
+import TransactionHead from "./TransactionHead";
 
 function TransactionBills({ user }) {
   const [val, setVal] = useState("");
@@ -21,6 +24,7 @@ function TransactionBills({ user }) {
   const { creditTransactions, status: creditStatus } = useGetCreditTransactions(
     user?.$id
   );
+
   const sortArr = ["all", "withdrawal", "deposit"];
   // useEffect(
   //   function () {
@@ -33,20 +37,27 @@ function TransactionBills({ user }) {
   //   [val, pathname, router, searchParams]
   // );
 
-  useEffect(
-    function () {
-      function handleClick() {
-        const params = new URLSearchParams(searchParams);
-        params.set("sortBy", sortArr[count]);
-        router.replace(`${pathname}?${params.toString()}`);
-      }
-      handleClick();
-    },
-    [pathname, router, sortArr, count, searchParams]
-  );
+  // useEffect(
+  //   function () {
+  //     function handleClick() {
+  //       const params = new URLSearchParams(searchParams);
+  //       params.set("sortBy", sortArr[count]);
+  //       router.replace(`${pathname}?${params.toString()}`);
+  //     }
+  //     handleClick();
+  //   },
+  //   [count]
+  //   // [pathname, router, sortArr, count, searchParams]
+  // );
   if (debitStatus === "pending" || creditStatus === "pending")
-    return <p>loading</p>;
-
+    return (
+      <div>
+        <TransactionHead />
+        <div className="flex items-center justify-center h-[100px]">
+          <MoonLoader speedMultiplier={0.5} color="#ea763d" size={30} />
+        </div>
+      </div>
+    );
   const recentTransactions = [debitTransactions, creditTransactions];
   const arrTransact = allTransactions(recentTransactions, user);
   const transactionArr = arrTransact.map((transaction) => {
@@ -63,12 +74,27 @@ function TransactionBills({ user }) {
         transaction.credImg === null ? transaction.depImg : transaction.credImg,
     };
   });
-
+  if (!transactionArr.length)
+    return (
+      <>
+        <TransactionHead />
+        <div className="flex flex-col items-center justify-center h-[100px] gap-2">
+          <div className="rounded-full bg-buttonOrange p-3 text-zinc-300">
+            <TbReceiptOff className="text-2xl" />
+          </div>
+          <p className="text-sm text-zinc-400">
+            You don&apos;t have any transactions
+          </p>
+        </div>
+      </>
+    );
   const sortBy = searchParams.get("sortBy") || "all";
   function handleClick() {
     setCount((c) => (count < 2 ? count + 1 : 0));
+    const params = new URLSearchParams(searchParams);
+    params.set("sortBy", sortArr[count]);
+    router.replace(`${pathname}?${params.toString()}`);
   }
-
   return (
     <>
       <div className="flex justify-between items-center mb-8">

@@ -219,7 +219,6 @@ export async function getCreditTransaction(id) {
       [Query.equal("credId", id)]
     );
     revalidatePath("/account");
-    revalidatePath("/account");
     return parseStringify(creditTransactions.documents);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);

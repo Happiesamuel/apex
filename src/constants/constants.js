@@ -212,4 +212,4 @@ export const bills = [
   },
 ];
 
-export const RESULT_PER_PAGE = 6;
+export const RESULT_PER_PAGE = 1;

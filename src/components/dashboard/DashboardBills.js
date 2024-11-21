@@ -74,7 +74,7 @@ export default function DashboardBills() {
         </Link>
       </div>
 
-      <Link href="/payments">
+      <Link href="/account/payments">
         <Button className="w-full bg-zinc-800 rounded-full py-1 text-zinc-400">
           View All
         </Button>

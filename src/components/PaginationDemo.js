@@ -27,7 +27,6 @@ export default function PaginationDemo({ totalPage }) {
     },
     [count, pathname, router]
   );
-
   return (
     <Pagination>
       <PaginationContent>

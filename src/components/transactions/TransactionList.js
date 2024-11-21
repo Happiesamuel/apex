@@ -74,15 +74,9 @@ function TransactionList({ val, transactionArr }) {
   console.log(arr);
   return (
     <div className="">
-      {!optimisticTransaction.length ? (
-        <div className="flex flex-col items-center justify-center">
-          <p>
-            You&apos;ve haven&apos;t transfered or recieve any transactions.
-          </p>
-        </div>
-      ) : !filtTrans.length ? (
+      {!filtTrans.length ? (
         <div className="flex flex-col gap-2 items-center justify-center mb-3">
-          <FaSearch className="text-3xl text-zinc-500" />
+          <FaSearch className="text-3xl text-buttonOrange/50" />
           <p className="text-zinc-400 text-base font-semibold">
             No result for &quot;{val}&quot;
           </p>
