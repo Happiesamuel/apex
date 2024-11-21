@@ -14,12 +14,12 @@ function Popup({ open, handleClick, type, title, heading, handleCancel }) {
   return (
     <AlertDialog defaultOpen={open}>
       {!open && <AlertDialogTrigger>Open</AlertDialogTrigger>}
-      <AlertDialogContent className="bg-bgBlur rounded-lg border-2 border-buttonOrange">
+      <AlertDialogContent className="bg-bgBlur rounded-lg border-2 border-buttonOrange font-fredoka">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-zinc-200 text-center ">
             {heading}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-zinc-400 text-center">
+          <AlertDialogDescription className="text-zinc-400 text-center font-fredoka">
             {title}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -39,7 +39,7 @@ function Popup({ open, handleClick, type, title, heading, handleCancel }) {
               handleClick();
               handleCancel?.();
             }}
-            className={`bg-buttonOrange w-full`}
+            className={`bg-buttonOrange w-full text-zinc-100`}
           >
             {type === "welcomePay" ? "Claim" : "Continue"}
           </AlertDialogAction>

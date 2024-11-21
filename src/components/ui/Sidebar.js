@@ -6,6 +6,7 @@ import apexImg from "@/../public/asset/apex-logo.png";
 import userImg from "@/../public/asset/user-img.png";
 import SidebarLinks from "../SidebarLinks";
 import { sidebarLinks, sidebarLinksTwo } from "@/constants/constants";
+import { useGetAuth } from "@/hooks/useGetAuth";
 
 const Sidebar = ({ user }) => {
   return (

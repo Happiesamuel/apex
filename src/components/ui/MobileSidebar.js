@@ -14,9 +14,9 @@ function MobileSidebar() {
         {links.map((link) => (
           <Link href={link.route} key={link.slug}>
             <TooltipDemo
-              className={` text-8xl relative hover:bg-transparent p-0 ${
+              className={` text-2xl relative hover:bg-transparent text-zinc-100 p-0 ${
                 slug === link.slug
-                  ? "bg-buttonOrange hover:bg-buttonOrange p-2 border-4 border-zinc-100 rounded-full bottom-[20px] py-5 "
+                  ? "bg-buttonOrange hover:bg-buttonOrange p-2 border-4 text-zinc-100 border-zinc-100 rounded-full bottom-[20px] "
                   : "text-zinc-500 bg-transparent"
               }`}
               content={link.title}

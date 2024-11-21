@@ -11,14 +11,14 @@ export default function DashboardBills() {
     <div className="text-zinc-100 w-full md:w-[30%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full">
       <div className="flex justify-between items-center">
         <h1 className="text-base text-zinc-300">Bill & Payment</h1>
-        <Link href="/payments">
+        <Link href="/account/payments">
           <CiCirclePlus className="text-2xl cursor-pointer" />
         </Link>
       </div>
 
       <div className="mt-6 mb-3 gap-4 flex flex-col">
         <Link
-          href="/payments/netflix"
+          href="/account/payments/netflix"
           className="flex flex-col cursor-pointer border border-zinc-800 bg-[#181818] rounded-xl "
         >
           <div className="flex justify-between items-center  py-2 px-2">
@@ -46,7 +46,7 @@ export default function DashboardBills() {
         </Link>
 
         <Link
-          href="/payments/spotify"
+          href="/account/payments/spotify"
           className="flex flex-col cursor-pointer border border-zinc-800 bg-[#181818] rounded-xl "
         >
           <div className="flex justify-between items-center  py-2 px-2">

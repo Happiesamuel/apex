@@ -59,7 +59,6 @@ const authConfig = {
             nationality: "",
           });
         }
-
         return true;
       } catch {
         return false;

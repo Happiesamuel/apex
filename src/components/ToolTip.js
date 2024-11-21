@@ -11,14 +11,14 @@ export function TooltipDemo({ title, content, className }) {
     <TooltipProvider clasName="">
       <Tooltip clasName="">
         <TooltipTrigger asChild>
-          <Button
+          <div
             // variant="outline"
             className={className}
           >
             {title}
-          </Button>
+          </div>
         </TooltipTrigger>
-        <TooltipContent className="bg-buttonOrange">
+        <TooltipContent className="bg-buttonOrange text-zinc-100">
           <p>{content}</p>
         </TooltipContent>
       </Tooltip>

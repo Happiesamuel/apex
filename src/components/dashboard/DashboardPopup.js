@@ -26,30 +26,7 @@ function DashboardPopup({ user }) {
       }
     );
   }
-
-  // async function handleRecievePay() {
-  //   try {
-  //     // await Promise.all([
-  //     //   await updateUser(user["$id"], {
-  //     //     totalBalance: 500,
-  //     //     welcomePay: true,
-  //     //   }),
-  //     //   await createNotification({
-  //     //     title: "Welcome",
-  //     //     message: `You've been credited $500 to start banking with us...You can transfer as well as pay some of your bills on Apex bank online and also request for loan if you need to pay or transfer urgently!`,
-  //     //     senderName: "Apex",
-  //     //     image: apexLogo.src,
-  //     //     status: false,
-  //     //     senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
-  //     //     recieverId: user["$id"],
-  //     //     recieverName: user.fullName,
-  //     //   }),
-  //     // ]);
-  //     revalidatePath("/account");
-  //   } catch (error) {
-  //     Toast({ description: "failed to claim", title: "Claiming failed" });
-  //   }
-  // }
+  console.log(user);
   return (
     <Popup
       open={true}
