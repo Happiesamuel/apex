@@ -9,8 +9,10 @@ export function useCreateTransaction() {
   const { mutate: createTransaction, status } = useMutation({
     mutationFn: (obj) => createTransactions(obj),
     onSuccess: () => {
-      queryClient.invalidateQueries("creditTransactions");
-      queryClient.invalidateQueries("debitTransactions");
+      queryClient.invalidateQueries({ active: true });
+      queryClient.invalidateQueries({ queryKey: ["creditTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["debitTransactions"] });
     },
     onError: (err) => {
       toast.error(err.message);

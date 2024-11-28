@@ -6,6 +6,7 @@ const page = () => {
     <div>
       <h1>sam</h1>
       <Link href="/auth/sign-in">sign in</Link>
+      <Link href="/account">dashboard</Link>
     </div>
   );
 };

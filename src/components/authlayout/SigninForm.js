@@ -3,22 +3,27 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import apexLogo from "@/../public/asset/apex-logo.png";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import FormInput from "./FormInput";
-import {
-  createUser,
-  getUsersByEmail,
-  signInWithCredentials,
-  updateUser,
-} from "@/lib/action";
+import { createUser, getUsersByEmail } from "@/lib/action";
 import { useState } from "react";
 import { redirect, useRouter } from "next/navigation";
-import { generateAccountNumber, Toast } from "@/lib/utils";
+import { formatRelativeTime, generateAccountNumber, Toast } from "@/lib/utils";
+import { useSignUp } from "@/hooks/useSignUp";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
+import { useCreateUser } from "@/hooks/useCreateUser";
+import { useCreateNotification } from "@/hooks/useCreateNotification";
+import { format } from "date-fns";
 
 export function SigninForm({ type }) {
   const [loading, setLoading] = useState(false);
+  const { signUp } = useSignUp();
+  const { updateUser } = useUpdateUser();
+  const { createUser } = useCreateUser();
+  const { createNotification } = useCreateNotification();
+
   const router = useRouter();
   const formSchema = z.object({
     email: z.string().email(),
@@ -38,11 +43,11 @@ export function SigninForm({ type }) {
     },
   });
 
+  const formattedDate = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
   async function onSubmit(values) {
     setLoading(true);
     try {
       if (type === "sign-up") {
-        // const existedUser = await getUser(values.email);
         const existedUser = await getUsersByEmail(values.email);
         if (existedUser)
           return Toast({
@@ -50,28 +55,38 @@ export function SigninForm({ type }) {
             description: "You've created account with this email...",
           });
         else {
-          await createUser({
-            email: values.email,
-            fullName: values.username,
-            password: values.password,
-            accountNumber: generateAccountNumber(),
-            totalBalance: 0,
-            welcomePay: false,
-            countryFlag: "",
-            nationality: "",
-            image: "",
-          });
-          Toast({
-            description: "You've sign up  successfully",
-            title: "Sign-up message",
-          });
+          createUser(
+            {
+              email: values.email,
+              fullName: values.username,
+              password: values.password,
+              accountNumber: generateAccountNumber(),
+              totalBalance: 0,
+              welcomePay: false,
+              countryFlag: "",
+              nationality: "",
+              image: "",
+            },
+            {
+              onSuccess: () =>
+                Toast({
+                  description: "You've sign up  successfully",
+                  title: "Sign-up message",
+                }),
+              onError: () =>
+                Toast({
+                  description: "Failed to sign up",
+                  title: "Sign-up message",
+                }),
+            }
+          );
+
           router.replace("/auth/sign-in");
           redirect("/auth/sign-in");
         }
       }
       if (type === "sign-in") {
         const existedUser = await getUsersByEmail(values.email);
-        console.log(existedUser);
         if (!existedUser)
           return Toast({
             description: "Invalid credentials",
@@ -83,16 +98,52 @@ export function SigninForm({ type }) {
             title: "Incorrect password",
           });
         } else {
-          console.log({ ...values });
-          signInWithCredentials({ ...values });
-          Toast({
-            description: "You've Logged in successfully",
-            title: "Sign-in message",
-          });
-
-          router.replace("/account");
-          redirect("/account");
+          signUp(
+            { ...values },
+            {
+              onSuccess: () => {
+                Toast({
+                  description: "You've Logged in successfully",
+                  title: "Sign-in message",
+                });
+                router.push("/account");
+              },
+              onError: () => {
+                Toast({
+                  description: "Failed to sign in to Apex bank!",
+                  title: "Sign-in message",
+                });
+              },
+            }
+          );
         }
+        createNotification(
+          {
+            title: "Loan Request",
+            message: `You logged in to your Apex account ${formatRelativeTime(
+              formattedDate
+            )}`,
+            senderName: "Apex",
+            image: apexLogo.src,
+            status: false,
+            senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
+            recieverId: user["$id"],
+            recieverName: user.fullName,
+          },
+          {
+            onError: () =>
+              Toast({
+                description:
+                  "failed to create notificatiion for this transaction!",
+                title: "Notification error",
+              }),
+            onSuccess: () =>
+              Toast({
+                title: "Notification",
+                description: `1 new notification!`,
+              }),
+          }
+        );
       }
       if (type === "reset") {
         const existedUser = await getUsersByEmail(values.email);
@@ -103,13 +154,27 @@ export function SigninForm({ type }) {
             title: "Email does not exist!",
           });
         else {
-          await updateUser(existedUser["$id"], {
-            password: values.password,
-          });
-          Toast({
-            description: "Password reset successfully!",
-            title: "You've successfully reset yout password",
-          });
+          updateUser(
+            {
+              id: existedUser["$id"],
+              obj: {
+                password: values.password,
+              },
+            },
+            {
+              onSuccess: () =>
+                Toast({
+                  description: "Password reset successfully!",
+                  title: "You've successfully reset yout password",
+                }),
+              onError: () => {
+                Toast({
+                  description: "Failed request",
+                  title: "Failed to rest your password",
+                });
+              },
+            }
+          );
         }
         router.replace("/auth/sign-in");
         redirect("/auth/sign-in");
@@ -117,7 +182,7 @@ export function SigninForm({ type }) {
 
       setLoading(false);
 
-      router.replace("/account");
+      router.push("/account");
     } catch {
       setLoading(false);
     } finally {

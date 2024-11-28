@@ -6,15 +6,13 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useState, useEffect } from "react";
-import {
-  createNotification,
-  createTransactions,
-  getUsers,
-  updateUser,
-} from "@/lib/action";
+import { getUsers } from "@/lib/action";
 import { Toast } from "@/lib/utils";
 import Popup from "../ui/Popup";
 import TransferFormField from "./TransferFormField";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
+import { useCreateTransaction } from "@/hooks/useCreateTransaction";
+import { useCreateNotification } from "@/hooks/useCreateNotification";
 const formSchema = z.object({
   username: z.string().min(2),
   amount: z.string().min(2).max(10),
@@ -23,6 +21,9 @@ const formSchema = z.object({
 });
 
 export default function TransferForm({ setId, userAcc }) {
+  const { updateUser, status: updateStatus } = useUpdateUser();
+  const { createTransaction, status: transtStatus } = useCreateTransaction();
+  const { createNotification } = useCreateNotification();
   const [value, setValue] = useState("");
   const [transferring, setTransfering] = useState(false);
   const [amountVal, setAmountVal] = useState("");
@@ -38,7 +39,6 @@ export default function TransferForm({ setId, userAcc }) {
           const findUser = users.find((user) => user.accountNumber === value);
           if (!findUser) {
             setUser({});
-            // alert("Account not found!");
             return Toast({
               title: "Account not found!",
               description:
@@ -67,7 +67,6 @@ export default function TransferForm({ setId, userAcc }) {
       accountNumber: value,
     },
   });
-  // console.log("sam");
   function handleShowModal() {
     if (!amountVal) return setIsOpen(false);
     setIsOpen(true);
@@ -95,20 +94,50 @@ export default function TransferForm({ setId, userAcc }) {
       //  2410170648
       //  2410170620
 
-      await Promise.all([
-        // updateUser(userAcc["$id"], {
-        //   totalBalance: userAcc.totalBalance - +values.amount,
-        // }),
-        // createTransactions({
-        //   amount: +values.amount,
-        //   credId: user["$id"],
-        //   depId: userAcc["$id"],
-        //   status: "deposit",
-        //   depImg: userAcc.image,
-        //   credName: user.fullName,
-        //   depName: userAcc.fullName,
-        // }),
-
+      updateUser(
+        {
+          id: userAcc["$id"],
+          obj: {
+            totalBalance: userAcc.totalBalance - +values.amount,
+          },
+        },
+        {
+          onError: () =>
+            Toast({
+              description: `failed to send funds to ${user.fullName}`,
+              title: "Unsuccessful",
+            }),
+          onSuccess: () =>
+            Toast({
+              title: "Debited!",
+              description: `You've sent $${values.amount} to ${user.fullName}`,
+            }),
+        }
+      );
+      createTransaction({
+        amount: +values.amount,
+        credId: user["$id"],
+        depId: userAcc["$id"],
+        status: "deposit",
+        depImg: userAcc.image,
+        credName: user.fullName,
+        depName: userAcc.fullName,
+      }),
+        updateUser({
+          id: user["$id"],
+          obj: {
+            totalBalance: user.totalBalance + +values.amount,
+          },
+        });
+      createTransaction({
+        amount: +values.amount,
+        credId: user["$id"],
+        depId: userAcc["$id"],
+        status: "withdrawal",
+        credImg: user.image,
+        credName: user.fullName,
+        depName: userAcc.fullName,
+      }),
         createNotification({
           title: "Withdrawal",
           message: `You sent $${+values.amount} to ${user.fullName}`,
@@ -119,34 +148,32 @@ export default function TransferForm({ setId, userAcc }) {
           recieverId: user["$id"],
           recieverName: user.fullName,
         }),
-      ]);
-      await Promise.all([
-        // updateUser(user["$id"], {
-        //   totalBalance: user.totalBalance + +values.amount,
-        // }),
-
-        // createTransactions({
-        //   amount: +values.amount,
-        //   credId: user["$id"],
-        //   depId: userAcc["$id"],
-        //   status: "withdrawal",
-        //   credImg: user.image,
-        //   credName: user.fullName,
-        //   depName: userAcc.fullName,
-        // }),
-
-        createNotification({
-          title: "Deposit",
-          message: `You recieved $${+values.amount} from ${userAcc.fullName}`,
-          senderName: userAcc.fullName,
-          image: userAcc.image,
-          status: false,
-          senderId: userAcc["$id"],
-          recieverId: user["$id"],
-          recieverName: user.fullName,
-        }),
-      ]);
-      setUser({ ...user, totalBalance: user.totalBalance + +values.amount });
+        createNotification(
+          {
+            title: "Deposit",
+            message: `You recieved $${+values.amount} from ${userAcc.fullName}`,
+            senderName: userAcc.fullName,
+            image: userAcc.image,
+            status: false,
+            senderId: userAcc["$id"],
+            recieverId: user["$id"],
+            recieverName: user.fullName,
+          },
+          {
+            onError: () =>
+              Toast({
+                description:
+                  "failed to create notificatiion for this transaction!",
+                title: "Notification error",
+              }),
+            onSuccess: () =>
+              Toast({
+                title: "Notification",
+                description: `1 new notification!`,
+              }),
+          }
+        ),
+        setUser({ ...user, totalBalance: user.totalBalance + +values.amount });
       setValue("");
       setAmountVal("");
       Toast({

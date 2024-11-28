@@ -58,7 +58,7 @@ export const sidebarLinks = [
     slug: "payments",
   },
   {
-    route: "/notifications/read",
+    route: "/account/notifications",
     title: "Notifications",
     svg: <IoMdNotificationsOutline />,
     slug: "notifications",
@@ -212,4 +212,4 @@ export const bills = [
   },
 ];
 
-export const RESULT_PER_PAGE = 1;
+export const RESULT_PER_PAGE = 6;

@@ -115,3 +115,43 @@ export function allTransactions(recentTransactions, user) {
   );
   return newArr;
 }
+export function allNotifications(notifications, user, type) {
+  const arr1 = notifications
+    .flat()
+    .filter(
+      (x) =>
+        x.status === (type === "read" ? true : false) &&
+        x.senderId === user.$id &&
+        x.title === "Withdrawal"
+    );
+  const arr2 = notifications
+    .flat()
+    .filter(
+      (x) =>
+        x.status === (type === "read" ? true : false) &&
+        x.recieverId === user.$id &&
+        x.title === "Deposit"
+    );
+  const arr3 = notifications.flat().filter((x) => {
+    console.log(x);
+    return (
+      x.status === (type === "read" ? true : false) &&
+      // x.recieverId === user.$id&&
+      x.senderId === process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID &&
+      x.senderName === "Apex"
+    );
+  });
+  console.log(arr3, user);
+  const arr4 = notifications
+    .flat()
+    .filter(
+      (x) =>
+        x.status === (type === "read" ? true : false) &&
+        x.senderId === process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID &&
+        x.title === "Withdrawal"
+    );
+  const newArr = [...arr1, ...arr2, ...arr3, ...arr4].sort(
+    (a, b) => isoToTimestamp(b["$createdAt"]) - isoToTimestamp(a["$createdAt"])
+  );
+  return newArr;
+}

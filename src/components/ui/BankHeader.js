@@ -9,7 +9,7 @@ import { HeaderInput } from "../HeaderInput";
 
 export default function BankHeader({ notifications }) {
   const pathname = usePathname();
-  const slug = pathname.split("/").at(1);
+  const slug = pathname.split("/").at(pathname.split("/").length === 2 ? 1 : 2);
   const links = [...sidebarLinks, ...sidebarLinksTwo];
   const active = links.find((x) => x.slug === slug);
   return (

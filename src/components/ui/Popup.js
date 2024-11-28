@@ -14,7 +14,7 @@ function Popup({ open, handleClick, type, title, heading, handleCancel }) {
   return (
     <AlertDialog defaultOpen={open}>
       {!open && <AlertDialogTrigger>Open</AlertDialogTrigger>}
-      <AlertDialogContent className="bg-bgBlur rounded-lg border-2 border-buttonOrange font-fredoka">
+      <AlertDialogContent className="bg-bgBlur rounded-lg border-none font-fredoka">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-zinc-200 text-center ">
             {heading}

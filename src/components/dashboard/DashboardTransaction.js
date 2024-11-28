@@ -6,6 +6,7 @@ import { bills } from "@/constants/constants";
 import { useGetDebitTransactions } from "@/hooks/useGetDebitTransactions";
 import { useGetCreditTransactions } from "@/hooks/useGetCreditTransactions";
 import { TbReceiptOff } from "react-icons/tb";
+import TransactionLoader from "../transactions/TransactionLoader";
 
 export default function DashboardTransaction({ user }) {
   const { debitTransactions, status: debitStatus } = useGetDebitTransactions(
@@ -15,7 +16,11 @@ export default function DashboardTransaction({ user }) {
     user?.$id
   );
   if (debitStatus === "pending" || creditStatus === "pending")
-    return <p>loading</p>;
+    return (
+      <div className="w-full  bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 ">
+        <TransactionLoader type="dashboard" />
+      </div>
+    );
 
   const recentTransactions = [debitTransactions, creditTransactions];
   const arrTransact = allTransactions(recentTransactions, user);
@@ -41,7 +46,6 @@ export default function DashboardTransaction({ user }) {
   const findArr2 = [
     ...new Set(findArr.flatMap((x) => bills.filter((y) => y.title === x))),
   ];
-  console.log(transactions);
   return (
     <div className="text-zinc-100 w-full md:w-[68%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full mb-8 md:mb-0 min-h-[180px]">
       <div>

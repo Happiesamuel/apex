@@ -1,6 +1,5 @@
 import AuthButtonForm from "./AuthButtonForm";
-import { createNotification, signInWithGoogleAction } from "@/lib/action";
-import apexLogo from "@/../public/asset/apex-logo.png";
+import { signInWithGoogleAction } from "@/lib/action";
 
 function AuthOptions() {
   return (
@@ -22,16 +21,6 @@ function AuthOptions() {
           action={async () => {
             "use server";
             await signInWithGoogleAction();
-            // await createNotification({
-            //   title: "Welcome back!",
-            //   message: `You`,
-            //   senderName: "Apex",
-            //   image: apexLogo.src,
-            //   status: false,
-            //   senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
-            //   recieverId: user["$id"],
-            //   recieverName: user.fullName,
-            // });
           }}
           color="#3b1f1d"
         />

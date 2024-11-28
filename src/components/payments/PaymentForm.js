@@ -1,21 +1,16 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form } from "../ui/form";
-import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import PaymentInput from "./PaymentInput";
-import { useState } from "react";
-import {
-  createNotification,
-  createTransactions,
-  updateUser,
-} from "@/lib/action";
 import { capitalizeWords, generateAlphanumericID, Toast } from "@/lib/utils";
 import { bills } from "@/constants/constants";
 import { redirect, useRouter } from "next/navigation";
+import { useUpdateUser } from "@/hooks/useUpdateUser";
+import { useCreateTransaction } from "@/hooks/useCreateTransaction";
+import { useCreateNotification } from "@/hooks/useCreateNotification";
 
 const formSchema = z.object({
   billName: z.string().min(2, {
@@ -26,7 +21,9 @@ const formSchema = z.object({
 });
 
 export function PaymentForm({ payname, user }) {
-  const [load, setLoad] = useState(false);
+  const { updateUser, status: updateStatus } = useUpdateUser();
+  const { createTransaction, status: transtStatus } = useCreateTransaction();
+  const { createNotification, status: notifyStatus } = useCreateNotification();
   const router = useRouter();
   const payCheck = payname.split("_").join(" ");
 
@@ -38,48 +35,90 @@ export function PaymentForm({ payname, user }) {
   });
 
   async function onSubmit(values) {
-    setLoad(true);
     try {
-      await Promise.all([
-        // updateUser(user["$id"], {
-        //   totalBalance: user.totalBalance - +values.amount,
-        // }),
-        // createTransactions({
-        //   amount: +values.amount,
-        //   credId: generateAlphanumericID(),
-        //   depId: user["$id"],
-        //   status: "withdrawal",
-        //   credImg: null,
-        //   credName: capitalizeWords(values.billName),
-        //   depName: user.fullName,
-        // }),
-
-        createNotification({
-          title: "Withdrawal",
-          message: `You paid $${+values.amount} for your ${capitalizeWords(
+      // await new Promise((resolve) => setTimeout(resolve, 4000));
+      if (+values.amount > user.totalBalance) {
+        Toast({
+          description: `You don't have enough funds to pay for your ${capitalizeWords(
             payCheck
           )} bills`,
-          senderName: capitalizeWords(values.billName),
-          image: "",
-          status: false,
-          senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
-          recieverId: user["$id"],
-          recieverName: user.fullName,
-        }),
-      ]);
-      Toast({
-        title: "Tranfer successfully",
-        description: `You've sucessfully paid for your ${capitalizeWords(
-          payCheck
-        )} bills`,
-      });
-      form.reset();
-      router.replace("/payments");
-      redirect("/payments");
+          title: "Insufficent fund!",
+        });
+      } else {
+        updateUser(
+          {
+            id: user["$id"],
+            obj: {
+              totalBalance: user.totalBalance - +values.amount,
+            },
+          },
+          {
+            onError: () =>
+              Toast({
+                description: `failed to pay your ${capitalizeWords(
+                  payCheck
+                )} bills`,
+                title: "Unsuccessful",
+              }),
+            onSuccess: () =>
+              Toast({
+                title: "Tranfer successfully",
+                description: `You've sucessfully paid for your ${capitalizeWords(
+                  payCheck
+                )} bills`,
+              }),
+          }
+        ),
+          createNotification(
+            {
+              title: "Withdrawal",
+              message: `You paid $${+values.amount} for your ${capitalizeWords(
+                payCheck
+              )} bills`,
+              senderName: capitalizeWords(values.billName),
+              image: "",
+              status: false,
+              senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
+              recieverId: user["$id"],
+              recieverName: user.fullName,
+            },
+            {
+              onError: () =>
+                Toast({
+                  description:
+                    "failed to create notificatiion for this transaction!",
+                  title: "Notification error",
+                }),
+              onSuccess: () =>
+                Toast({
+                  title: "Notification",
+                  description: `1 new notification!`,
+                }),
+            }
+          ),
+          createTransaction(
+            {
+              amount: +values.amount,
+              credId: generateAlphanumericID(),
+              depId: user["$id"],
+              status: "withdrawal",
+              credImg: null,
+              credName: capitalizeWords(values.billName),
+              depName: user.fullName,
+            },
+            {
+              onSuccess: () => {
+                form.reset();
+                router.replace("/account/payments");
+                redirect("/account/payments");
+              },
+            }
+          );
+      }
     } catch (error) {
-      setLoad(false);
+      // setLoad(false);
     } finally {
-      setLoad(false);
+      // setLoad(false);
     }
   }
   const bill = bills.find((b) => b.title === capitalizeWords(payCheck));
@@ -118,8 +157,20 @@ export function PaymentForm({ payname, user }) {
             type="number"
             form={form}
           />
-          <Button className="bg-buttonOrange" type="submit">
-            {load ? "Submitting..." : "Submit"}
+          <Button
+            disabled={
+              transtStatus === "pending" ||
+              updateStatus === "pending" ||
+              notifyStatus === "pending"
+            }
+            className="bg-buttonOrange"
+            type="submit"
+          >
+            {transtStatus === "pending" ||
+            updateStatus === "pending" ||
+            notifyStatus === "pending"
+              ? "Submitting..."
+              : "Submit"}
           </Button>
         </form>
       </Form>

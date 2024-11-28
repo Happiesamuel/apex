@@ -1,46 +1,35 @@
 "use client";
-import { useEffect, useOptimistic } from "react";
 import TransactionRow from "./TransactionRow";
-import { deleteTransaction } from "@/lib/action";
-import { allTransactions, Toast } from "@/lib/utils";
+import { Toast } from "@/lib/utils";
 import PaginationDemo from "../PaginationDemo";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { bills, RESULT_PER_PAGE } from "@/constants/constants";
 import { FaSearch } from "react-icons/fa";
+import { useDeleteTransaction } from "@/hooks/useDeleteTransaction";
 
 function TransactionList({ val, transactionArr }) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { deleteTransaction, deleteStatus } = useDeleteTransaction();
 
-  const [optimisticTransaction, optimisticDelete] = useOptimistic(
-    transactionArr,
-    (currTrans, id) => currTrans.filter((trans) => trans.transId !== id)
-  );
   const page = +searchParams.get("page") || 1;
   const sortBy = searchParams.get("sortBy") || "all";
-  useEffect(
-    function () {
-      function handleClick() {
-        const params = new URLSearchParams(searchParams);
-        params.set("page", 1);
-        router.replace(`${pathname}?${params.toString()}`);
-      }
-      handleClick();
-    },
-    [pathname, router, searchParams]
-  );
-
-  async function handleDelete(id) {
-    optimisticDelete(id);
-    await deleteTransaction(id);
-    Toast({
-      title: "Deleted Transaction!",
-      description: `You've sucessfully deleted transaction from your transaction list.`,
+  function handleDelete(id) {
+    deleteTransaction(id, {
+      onSuccess: () => {
+        Toast({
+          title: "Deleted Transaction!",
+          description: `You've sucessfully deleted this transaction from your transaction list.`,
+        });
+      },
+      onError: () => {
+        Toast({
+          title: "Failed!",
+          description: `Failed to delete this transaction`,
+        });
+      },
     });
   }
-  const trans = optimisticTransaction;
-  const filtTrans = trans.filter((x) =>
+  const filtTrans = transactionArr.filter((x) =>
     x.name.toLowerCase().startsWith(val.toLowerCase())
   );
   let sortArr;
@@ -71,7 +60,6 @@ function TransactionList({ val, transactionArr }) {
     (page - 1) * RESULT_PER_PAGE,
     page * RESULT_PER_PAGE
   );
-  console.log(arr);
   return (
     <div className="">
       {!filtTrans.length ? (
@@ -95,9 +83,7 @@ function TransactionList({ val, transactionArr }) {
           </ul>
           {filtTrans.length > RESULT_PER_PAGE && (
             <PaginationDemo
-              totalPage={Math.ceil(
-                optimisticTransaction.length / RESULT_PER_PAGE
-              )}
+              totalPage={Math.ceil(transactionArr.length / RESULT_PER_PAGE)}
             />
           )}
         </>

@@ -4,6 +4,7 @@ import { PiDotsThreeCircleThin } from "react-icons/pi";
 import { FaPlus, FaWallet } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { IoSettingsOutline } from "react-icons/io5";
+import Link from "next/link";
 export default function DashboardManagement({ user }) {
   return (
     <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-3">
@@ -26,9 +27,11 @@ export default function DashboardManagement({ user }) {
           <IoSettingsOutline />
           <p className="text-base">Manage Balance</p>
         </Button>
-        <Button className="flex items-center gap-2 bg-buttonOrange text-zinc-100  rounded-full">
-          <FaPlus />
-          <p className="text-base">New Payment</p>
+        <Button className=" bg-buttonOrange text-zinc-100  rounded-full">
+          <Link href="/account/transfer" className="flex items-center gap-2">
+            <FaPlus />
+            <p className="text-base">New Payment</p>
+          </Link>
         </Button>
       </div>
     </div>

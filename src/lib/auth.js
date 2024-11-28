@@ -1,7 +1,10 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { getUsersByEmail } from "./action";
+import { createNotification, getUsersByEmail } from "./action";
+import { format } from "date-fns";
+import { formatRelativeTime } from "./utils";
+import apexLogo from "@/../public/asset/apex-logo.png";
 
 const authConfig = {
   providers: [
@@ -45,7 +48,13 @@ const authConfig = {
     },
     async signIn({ user }) {
       try {
+        const formattedDate = format(
+          new Date(),
+          "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+        );
         const existedUser = await getUsersByEmail(user.email);
+        console.log(existedUser);
+
         if (!existedUser) {
           await createUser({
             email: user.email,
@@ -58,6 +67,19 @@ const authConfig = {
             image: user.image,
             nationality: "",
           });
+        } else {
+          await createNotification({
+            title: "Welcome Back",
+            message: `You logged in to your Apex account ${formatRelativeTime(
+              formattedDate
+            )}`,
+            senderName: "Apex",
+            image: apexLogo.src,
+            status: false,
+            senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
+            recieverId: existedUser.$id,
+            recieverName: existedUser.fullName,
+          });
         }
         return true;
       } catch {
@@ -68,7 +90,7 @@ const authConfig = {
     async session({ session }) {
       try {
         const users = await getUsersByEmail(session.user.email);
-        session.user.userId = users["$id"];
+        session.user.userId = users.$id;
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

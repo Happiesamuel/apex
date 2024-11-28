@@ -101,6 +101,7 @@ export async function createTransactions(obj) {
       obj
     );
     revalidatePath("/account");
+    revalidatePath("/account/transfer");
     return parseStringify(newTransaction);
   } catch (error) {
     throw new Error("Failed to  Create transaction");
@@ -129,10 +130,8 @@ export async function deleteTransaction(documentId) {
       documentId
     );
     revalidatePath("/account");
-    revalidatePath("/account");
-
     return response; // Returns a confirmation object
-  } catch (E) {
+  } catch (error) {
     throw new Error("Error deleting transaction", error);
   }
 }
@@ -186,8 +185,6 @@ export async function getDebitTransaction(id) {
       process.env.APPWRITE_TRANSACTIONS_ID,
       [Query.equal("depId", id)]
     );
-    revalidatePath("/account");
-    revalidatePath("/account");
     return parseStringify(debitTransactions.documents);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);
@@ -218,7 +215,6 @@ export async function getCreditTransaction(id) {
       process.env.APPWRITE_TRANSACTIONS_ID,
       [Query.equal("credId", id)]
     );
-    revalidatePath("/account");
     return parseStringify(creditTransactions.documents);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);
@@ -252,12 +248,12 @@ export async function updateAllNotifications(id, obj) {
       database.listDocuments(
         process.env.APPWRITE_DATABASE_ID,
         process.env.APPWRITE_NOTIFICATIONS_ID,
-        [Query.equal("senderId", id)]
+        [Query.equal("$id", id)]
       ),
       database.listDocuments(
         process.env.APPWRITE_DATABASE_ID,
         process.env.APPWRITE_NOTIFICATIONS_ID,
-        [Query.equal("recieverId", id)]
+        [Query.equal("$id", id)]
       ),
     ]);
     const [notificationOne, notificationTwo] = notifications;
@@ -268,7 +264,7 @@ export async function updateAllNotifications(id, obj) {
         async (doc) =>
           await database.updateDocument(databaseId, collectionId, doc.$id, obj)
       );
-    revalidatePath("/notification/read");
+    revalidatePath("/account");
   } catch (error) {
     throw new Error("Error updating documents:", error);
   }
@@ -280,10 +276,10 @@ export async function deleteAllNotifications(id) {
     const { database } = await createAdminClient();
     const notifications = await Promise.all([
       database.listDocuments(databaseId, collectionId, [
-        Query.equal("senderId", id),
+        Query.equal("$id", id),
       ]),
       database.listDocuments(databaseId, collectionId, [
-        Query.equal("recieverId", id),
+        Query.equal("$id", id),
       ]),
     ]);
     const [notificationOne, notificationTwo] = notifications;
@@ -291,11 +287,11 @@ export async function deleteAllNotifications(id) {
       ...notificationOne.documents,
       ...notificationTwo.documents,
     ];
-
+    console.log(documents);
     for (const doc of documents) {
       await database.deleteDocument(databaseId, collectionId, doc.$id);
     }
-    revalidatePath("/notification/read");
+    revalidatePath("/account");
   } catch (error) {
     throw new Error("Error deleting documents:", error);
   }

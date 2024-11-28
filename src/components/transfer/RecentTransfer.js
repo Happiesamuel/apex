@@ -8,18 +8,22 @@ import { TbReceiptOff } from "react-icons/tb";
 import { bills } from "@/constants/constants";
 import { useGetDebitTransactions } from "@/hooks/useGetDebitTransactions";
 import { useGetCreditTransactions } from "@/hooks/useGetCreditTransactions";
+import { MoonLoader } from "react-spinners";
 
 export default function RecentTransfer({ user }) {
-  const { debitTransactions, status: debitStatus } = useGetDebitTransactions(
-    user?.$id
-  );
-  const { creditTransactions, status: creditStatus } = useGetCreditTransactions(
-    user?.$id
-  );
+  const { debitTransactions, status: debitStatus } =
+    useGetDebitTransactions(user);
+  const { creditTransactions, status: creditStatus } =
+    useGetCreditTransactions(user);
   if (debitStatus === "pending" || creditStatus === "pending")
-    return <p>loading</p>;
+    return (
+      <div className="flex flex-col items-center justify-center h-[200px]">
+        <MoonLoader speedMultiplier={0.5} color="#ea763d" size={30} />
+        <p className="text-zinc-400 text-sm mt-3">Loading Transactions...</p>
+      </div>
+    );
 
-  const recentTransactions = [debitTransactions, creditTransactions];
+  const recentTransactions = [...debitTransactions, ...creditTransactions];
   const arrTransact = allTransactions(recentTransactions, user);
   const transactions = arrTransact
     .map((transaction) => {
@@ -43,15 +47,16 @@ export default function RecentTransfer({ user }) {
   const findArr2 = [
     ...new Set(findArr.flatMap((x) => bills.filter((y) => y.title === x))),
   ];
-  console.log(transactions);
   return (
     <div>
       <h1 className="text-xl text-zinc-200 mb-2">Recent Transactions</h1>
       {!transactions.length ? (
-        <div className="flex flex-col gap-2 items-center">
-          <TbReceiptOff className="text-3xl text-zinc-400" />
-          <p className="text-zinc-400 text-base text-center">
-            You don&apos;t have any transaction
+        <div className="flex flex-col items-center justify-center h-[100px] gap-2">
+          <div className="rounded-full bg-buttonOrange p-3 text-zinc-300">
+            <TbReceiptOff className="text-2xl" />
+          </div>
+          <p className="text-sm text-zinc-400">
+            You don&apos;t have any transactions
           </p>
         </div>
       ) : (
@@ -125,7 +130,7 @@ export default function RecentTransfer({ user }) {
                   >
                     {recent.status === "withdrawal" ? "-" : ""}${recent.amount}
                   </p>
-                  <p className="text-sm font-normal text-zinc-400">
+                  <p className="text-sm font-normal text-end text-zinc-400">
                     {formatDate(recent.date)}
                   </p>
                 </div>

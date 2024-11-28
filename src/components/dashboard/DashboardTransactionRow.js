@@ -50,7 +50,7 @@ export function DashboardTransactionRow({ transaction, findArr2 }) {
       >
         {transaction.status === "withdrawal" && "-"}${transaction.amount}
       </p>
-      <p className="">{formatDate(transaction.date)}</p>
+      <p className="text-xs">{formatDate(transaction.date)}</p>
       <BiDotsHorizontal />
     </div>
   );

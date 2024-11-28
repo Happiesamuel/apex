@@ -22,11 +22,11 @@ const page = async () => {
   const user = await getUsersByEmail(session?.user?.email);
   await queryClient.prefetchQuery({
     queryKey: ["debitTransactions"],
-    queryFn: async () => await getDebitTransaction(user?.$id),
+    queryFn: async () => await getDebitTransaction(user),
   });
   await queryClient.prefetchQuery({
     queryKey: ["creditTransactions"],
-    queryFn: async () => await getCreditTransaction(user?.$id),
+    queryFn: async () => await getCreditTransaction(user),
   });
 
   return (

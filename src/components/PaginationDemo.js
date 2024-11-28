@@ -11,7 +11,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function PaginationDemo({ totalPage }) {
+export default function PaginationDemo({ totalPage, setLoad }) {
   const searchParams = useSearchParams();
   const [count, setCount] = useState(+searchParams.get("page") || 1);
   const pathname = usePathname();
@@ -24,9 +24,11 @@ export default function PaginationDemo({ totalPage }) {
         router.replace(`${pathname}?${params.toString()}`);
       }
       handleClick();
+      // return () => setLoad(false);
     },
-    [count, pathname, router]
+    [count, pathname, router, setLoad]
   );
+
   return (
     <Pagination>
       <PaginationContent>

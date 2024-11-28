@@ -6,7 +6,7 @@ import { TooltipDemo } from "./ToolTip";
 
 export default function SidebarLinks({ data, type }) {
   const pathname = usePathname();
-  const slug = pathname.split("/").at(1);
+  const slug = pathname.split("/").at(pathname.split("/").length === 2 ? 1 : 2);
   return (
     <div className="mt-6 ">
       <p className="text-xs text-zinc-500 font-[500] mb-2">{type}</p>

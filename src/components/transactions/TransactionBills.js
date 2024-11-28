@@ -10,59 +10,47 @@ import { useGetCreditTransactions } from "@/hooks/useGetCreditTransactions";
 import { MoonLoader } from "react-spinners";
 import { TbReceiptOff } from "react-icons/tb";
 import TransactionHead from "./TransactionHead";
+import TransactionLoader from "./TransactionLoader";
 
 function TransactionBills({ user }) {
+  const { debitTransactions, status: debitStatus } =
+    useGetDebitTransactions(user);
+  const { creditTransactions, status: creditStatus } =
+    useGetCreditTransactions(user);
   const [val, setVal] = useState("");
   const [count, setCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { debitTransactions, status: debitStatus } = useGetDebitTransactions(
-    user?.$id
-  );
-  const { creditTransactions, status: creditStatus } = useGetCreditTransactions(
-    user?.$id
-  );
-
   const sortArr = ["all", "withdrawal", "deposit"];
-  // useEffect(
-  //   function () {
-  //     if (val.length) {
-  //       const params = new URLSearchParams(searchParams);
-  //       params.set("page", 1);
-  //       router.push(`${pathname}?${params.toString()}`);
-  //     }
-  //   },
-  //   [val, pathname, router, searchParams]
-  // );
+  const page = +searchParams.get("page") || 1;
+  useEffect(
+    function () {
+      if (page > 1 && val) {
+        const params = new URLSearchParams(searchParams);
+        params.set("page", 1);
+        router.push(`${pathname}?${params.toString()}`);
+      }
+    },
+    [val, pathname, router, searchParams, page]
+  );
 
-  // useEffect(
-  //   function () {
-  //     function handleClick() {
-  //       const params = new URLSearchParams(searchParams);
-  //       params.set("sortBy", sortArr[count]);
-  //       router.replace(`${pathname}?${params.toString()}`);
-  //     }
-  //     handleClick();
-  //   },
-  //   [count]
-  //   // [pathname, router, sortArr, count, searchParams]
-  // );
   if (debitStatus === "pending" || creditStatus === "pending")
-    return (
-      <div>
-        <TransactionHead />
-        <div className="flex items-center justify-center h-[100px]">
-          <MoonLoader speedMultiplier={0.5} color="#ea763d" size={30} />
-        </div>
-      </div>
-    );
-  const recentTransactions = [debitTransactions, creditTransactions];
+    return <TransactionLoader />;
+  const recentTransactions = [...debitTransactions, ...creditTransactions];
   const arrTransact = allTransactions(recentTransactions, user);
+
+  function handleClick() {
+    setCount((c) => (count < 2 ? count + 1 : 0));
+    const params = new URLSearchParams(searchParams);
+    params.set("sortBy", sortArr[count]);
+    router.replace(`${pathname}?${params.toString()}`);
+  }
+
   const transactionArr = arrTransact.map((transaction) => {
     return {
-      id: transaction["$id"],
+      id: transaction.$id,
       name:
         transaction.credName === user.fullName
           ? transaction.depName
@@ -88,15 +76,9 @@ function TransactionBills({ user }) {
         </div>
       </>
     );
-  const sortBy = searchParams.get("sortBy") || "all";
-  function handleClick() {
-    setCount((c) => (count < 2 ? count + 1 : 0));
-    const params = new URLSearchParams(searchParams);
-    params.set("sortBy", sortArr[count]);
-    router.replace(`${pathname}?${params.toString()}`);
-  }
+
   return (
-    <>
+    <Suspense key={page} fallback={<TransactionLoader />}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-base text-zinc-300">Bill & Payment</h1>
         <div className="flex gap-2 items-center">
@@ -109,17 +91,8 @@ function TransactionBills({ user }) {
           </div>
         </div>
       </div>
-      <Suspense
-        key={sortBy}
-        fallback={<p className="text-zinc-100 text-xl">load...</p>}
-      >
-        <TransactionList
-          val={val}
-          user={user}
-          transactionArr={transactionArr}
-        />
-      </Suspense>
-    </>
+      <TransactionList val={val} user={user} transactionArr={transactionArr} />
+    </Suspense>
   );
 }
 
