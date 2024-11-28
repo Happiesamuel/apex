@@ -1,5 +1,6 @@
 import { BiTransferAlt } from "react-icons/bi";
 import { CiWallet } from "react-icons/ci";
+import { FiLogOut } from "react-icons/fi";
 import {
   FaAmazon,
   FaBriefcaseMedical,
@@ -77,6 +78,14 @@ export const sidebarLinksTwo = [
     title: "Support",
     svg: <MdOutlineContactSupport />,
     slug: "support",
+  },
+];
+export const sidebarLinksThree = [
+  {
+    route: "#",
+    title: "Logout",
+    svg: <FiLogOut />,
+    slug: "logout",
   },
 ];
 

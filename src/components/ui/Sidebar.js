@@ -5,7 +5,7 @@ import { MdOutlineCheckBox } from "react-icons/md";
 import apexImg from "@/../public/asset/apex-logo.png";
 import userImg from "@/../public/asset/user-img.png";
 import SidebarLinks from "../SidebarLinks";
-import { sidebarLinks, sidebarLinksTwo } from "@/constants/constants";
+import { sidebarLinks, sidebarLinksThree, sidebarLinksTwo } from "@/constants/constants";
 import { useGetAuth } from "@/hooks/useGetAuth";
 
 const Sidebar = ({ user }) => {
@@ -37,6 +37,7 @@ const Sidebar = ({ user }) => {
 
       <SidebarLinks data={sidebarLinks} type="MAIN" />
       <SidebarLinks data={sidebarLinksTwo} type="OTHERS" />
+      <SidebarLinks data={sidebarLinksThree} type="LOGOUT" />
     </aside>
   );
 };

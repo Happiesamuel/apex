@@ -116,6 +116,10 @@ export function allTransactions(recentTransactions, user) {
   return newArr;
 }
 export function allNotifications(notifications, user, type) {
+  // if (type === "unread") {
+  //   const arr1 = notifications.flat().filter((x) => x.status === false);
+  //   console.log(arr1);
+  // }
   const arr1 = notifications
     .flat()
     .filter(
@@ -133,15 +137,14 @@ export function allNotifications(notifications, user, type) {
         x.title === "Deposit"
     );
   const arr3 = notifications.flat().filter((x) => {
-    console.log(x);
     return (
       x.status === (type === "read" ? true : false) &&
-      // x.recieverId === user.$id&&
+      x.recieverId === user.$id &&
       x.senderId === process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID &&
       x.senderName === "Apex"
     );
   });
-  console.log(arr3, user);
+  // console.log(arr3, user);
   const arr4 = notifications
     .flat()
     .filter(

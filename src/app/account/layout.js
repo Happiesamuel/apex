@@ -3,7 +3,13 @@ import BankHeader from "@/components/ui/BankHeader";
 import MobileSidebar from "@/components/ui/MobileSidebar";
 import Sidebar from "@/components/ui/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
+import {
+  getNotificationsByRecieversId,
+  getNotificationsBySendersId,
+  getUsersByEmail,
+} from "@/lib/action";
 import { auth } from "@/lib/auth";
+import { QueryClient } from "@tanstack/react-query";
 import dynamic from "next/dynamic";
 import { Fredoka } from "next/font/google";
 import { Inter } from "next/font/google";
@@ -31,8 +37,17 @@ export const metadata = {
 const App = dynamic(() => import("@/../App"), { ssr: true });
 
 export default async function RootLayout({ children }) {
+  const queryClient = new QueryClient();
   const session = await auth();
-  const notifications = [];
+  const user = await getUsersByEmail(session.user.email);
+  await queryClient.prefetchQuery({
+    queryKey: ["recieverNotifications"],
+    queryFn: async () => await getNotificationsByRecieversId(user?.$id),
+  });
+  await queryClient.prefetchQuery({
+    queryKey: ["senderNotifications"],
+    queryFn: async () => await getNotificationsBySendersId(user?.$id),
+  });
   return (
     <App>
       <div
@@ -45,7 +60,7 @@ export default async function RootLayout({ children }) {
           <MobileSidebar user={session?.user} />
         </div>
         <div className="flex flex-col divide-y divide-zinc-900 px-4">
-          <BankHeader notifications={notifications} />
+          <BankHeader user={user} />
           <div className="h-full overflow-scroll no-scrollbar">
             <main className="h-[85vh] md:h-[20px]  z-[50] relative">
               {children}

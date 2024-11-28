@@ -10,9 +10,12 @@ import SkeletonLoader from "./SkeletonLoader";
 import OptimisticNotification from "./OptimisticNotification";
 
 function ReadNotifications({ user, type }) {
-  const { recieverNotifications, recieverStatus } =
-    useRecieverNotification(user);
-  const { senderStatus, senderNotifications } = useSenderNotification(user);
+  const { recieverNotifications, recieverStatus } = useRecieverNotification(
+    user?.$id
+  );
+  const { senderStatus, senderNotifications } = useSenderNotification(
+    user?.$id
+  );
   const [checked, setChecked] = useState(false);
 
   if (recieverStatus === "pending" || senderStatus === "pending")

@@ -10,6 +10,7 @@ import { signIn, signOut } from "./auth";
 
 export async function signOutAction() {
   await signOut({ redirectTo: "/" });
+  redirect("/");
 }
 export async function signInWithGoogleAction() {
   await signIn("google", { redirectTo: "/account" });

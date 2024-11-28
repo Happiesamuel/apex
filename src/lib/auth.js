@@ -3,8 +3,6 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createNotification, getUsersByEmail } from "./action";
 import { format } from "date-fns";
-import { formatRelativeTime } from "./utils";
-import apexLogo from "@/../public/asset/apex-logo.png";
 
 const authConfig = {
   providers: [
@@ -53,7 +51,6 @@ const authConfig = {
           "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
         );
         const existedUser = await getUsersByEmail(user.email);
-        console.log(existedUser);
 
         if (!existedUser) {
           await createUser({
@@ -70,11 +67,9 @@ const authConfig = {
         } else {
           await createNotification({
             title: "Welcome Back",
-            message: `You logged in to your Apex account ${formatRelativeTime(
-              formattedDate
-            )}`,
+            message: `You've logged in to your Apex account. Keep banking with us.`,
             senderName: "Apex",
-            image: apexLogo.src,
+            image: "/_next/static/media/apex-logo.e142e805.png",
             status: false,
             senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
             recieverId: existedUser.$id,
