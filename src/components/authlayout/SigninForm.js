@@ -101,7 +101,6 @@ export function SigninForm({ type }) {
                   description: "You've Logged in successfully",
                   title: "Sign-in message",
                 });
-                router.replace("/account");
               },
               onError: () => {
                 Toast({
@@ -180,8 +179,6 @@ export function SigninForm({ type }) {
       }
 
       setLoading(false);
-
-      router.push("/account");
     } catch {
       setLoading(false);
     } finally {
