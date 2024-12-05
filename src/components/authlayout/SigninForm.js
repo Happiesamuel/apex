@@ -134,7 +134,6 @@ export function SigninForm({ type }) {
                 title: "Notification error",
               }),
             onSuccess: () => {
-              router.push("/account");
               Toast({
                 title: "Notification",
                 description: `1 new notification!`,
