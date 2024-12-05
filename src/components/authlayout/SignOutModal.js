@@ -18,7 +18,7 @@ export function SignOutModal({ children }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <div variant="outline">{children}</div>
+        <div variant="outline cursor-pointer">{children}</div>
       </AlertDialogTrigger>
       <AlertDialogContent className="bg-bgBlur rounded-lg border-none font-fredoka">
         <AlertDialogHeader>

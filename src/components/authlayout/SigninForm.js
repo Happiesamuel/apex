@@ -23,7 +23,6 @@ export function SigninForm({ type }) {
   const { updateUser } = useUpdateUser();
   const { createUser } = useCreateUser();
   const { createNotification } = useCreateNotification();
-
   const router = useRouter();
   const formSchema = z.object({
     email: z.string().email(),
@@ -33,14 +32,8 @@ export function SigninForm({ type }) {
         ? z.string().optional()
         : z.string().min(3),
   });
-
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      username: "",
-    },
   });
 
   const formattedDate = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
@@ -55,7 +48,7 @@ export function SigninForm({ type }) {
             description: "You've created account with this email...",
           });
         else {
-          createUser(
+          return createUser(
             {
               email: values.email,
               fullName: values.username,
@@ -67,14 +60,17 @@ export function SigninForm({ type }) {
               nationality: "",
               image: "",
               displayName: "",
-              pin: "",
+              pin: null,
             },
             {
-              onSuccess: () =>
+              onSuccess: () => {
                 Toast({
                   description: "You've sign up  successfully",
                   title: "Sign-up message",
-                }),
+                });
+                router.replace("/auth/sign-in");
+                // redirect("/auth/sign-in");
+              },
               onError: () =>
                 Toast({
                   description: "Failed to sign up",
@@ -82,9 +78,6 @@ export function SigninForm({ type }) {
                 }),
             }
           );
-
-          router.replace("/auth/sign-in");
-          redirect("/auth/sign-in");
         }
       }
       if (type === "sign-in") {
@@ -108,7 +101,7 @@ export function SigninForm({ type }) {
                   description: "You've Logged in successfully",
                   title: "Sign-in message",
                 });
-                router.push("/account");
+                router.replace("/account");
               },
               onError: () => {
                 Toast({
@@ -118,6 +111,8 @@ export function SigninForm({ type }) {
               },
             }
           );
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          router.push("/account");
         }
         createNotification(
           {
@@ -139,11 +134,13 @@ export function SigninForm({ type }) {
                   "failed to create notificatiion for this transaction!",
                 title: "Notification error",
               }),
-            onSuccess: () =>
+            onSuccess: () => {
+              router.push("/account");
               Toast({
                 title: "Notification",
                 description: `1 new notification!`,
-              }),
+              });
+            },
           }
         );
       }
@@ -190,7 +187,7 @@ export function SigninForm({ type }) {
     } finally {
       setLoading(false);
     }
-    form.reset();
+    // form.reset();
   }
 
   return (

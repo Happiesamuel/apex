@@ -40,9 +40,19 @@ const Sidebar = ({ user, userData }) => {
             />
           </div>
           <div className="lg:flex flex-col hidden justify-around">
-            <h3 className="text-base">
-              {userData.displayName ? userData.displayName : user.name}
-            </h3>
+            <div className="flex items-center gap-1">
+              <h3 className="text-base">
+                {userData.displayName ? userData.displayName : user.name}
+              </h3>
+              {userData?.countryFlag && (
+                <Image
+                  src={userData?.countryFlag}
+                  width={20}
+                  height={20}
+                  alt={`flag of ${user.nationality}`}
+                />
+              )}
+            </div>
             <p className="text-[10px] text-zinc-500">{user?.email}</p>
           </div>
         </div>

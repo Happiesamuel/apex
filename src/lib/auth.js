@@ -46,10 +46,6 @@ const authConfig = {
     },
     async signIn({ user }) {
       try {
-        const formattedDate = format(
-          new Date(),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-        );
         const existedUser = await getUsersByEmail(user.email);
 
         if (!existedUser) {
@@ -63,7 +59,7 @@ const authConfig = {
             totalBalance: 0,
             image: user.image,
             nationality: "",
-            pin: "",
+            pin: null,
             displayName: "",
           });
         } else {
@@ -87,6 +83,7 @@ const authConfig = {
     async session({ session }) {
       try {
         const users = await getUsersByEmail(session.user.email);
+        console.log(session);
         session.user.userId = users.$id;
       } catch (error) {
         console.error("Error fetching user data:", error);

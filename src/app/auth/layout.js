@@ -20,29 +20,27 @@ export const metadata = {
 const App = dynamic(() => import("@/../App"), { ssr: true });
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`antialiased ${fredoka.className} text-zinc-100  flex h-screen items-center w-full bg-backgroundColor`}
-      >
-        <App>
-          <Toaster />
-          <div className="flex flex-col items-center justify-center w-full md:w-[50%] mx-4">
-            <AuthHeader />
-            {children}
-          </div>
+    <div
+      className={`antialiased ${fredoka.className} text-zinc-100  flex h-screen items-center w-full bg-backgroundColor`}
+    >
+      <App>
+        <Toaster />
+        <div className="flex flex-col items-center justify-center w-full md:w-[50%] mx-4">
+          <AuthHeader />
+          {children}
+        </div>
 
-          <div className="hidden md:block h-full w-[50%]  relative aspect-square">
-            <Image
-              src={LogImg}
-              placeholder="blur"
-              className="object-left object-cover"
-              // quality={80}
-              alt="profile ing"
-              fill
-            />
-          </div>
-        </App>
-      </body>
-    </html>
+        <div className="hidden md:block h-full w-[50%]  relative aspect-square">
+          <Image
+            src={LogImg}
+            placeholder="blur"
+            className="object-left object-cover"
+            // quality={80}
+            alt="profile ing"
+            fill
+          />
+        </div>
+      </App>
+    </div>
   );
 }

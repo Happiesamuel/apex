@@ -8,9 +8,20 @@ import { parseStringify } from "./utils";
 import { object } from "zod";
 import { signIn, signOut } from "./auth";
 
+export async function getCountries() {
+  try {
+    const res = await fetch(
+      "https://restcountries.com/v2/all?fields=name,flag"
+    );
+    const countries = await res.json();
+    return countries;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+}
+
 export async function signOutAction() {
   await signOut({ redirectTo: "/" });
-  redirect("/");
 }
 export async function signInWithGoogleAction() {
   await signIn("google", { redirectTo: "/account" });
@@ -41,6 +52,7 @@ export async function createUser(obj) {
       ID.unique(),
       obj
     );
+    console.log(newUser, "samfxh");
     return parseStringify(newUser);
   } catch (error) {
     console.log(error);
@@ -153,6 +165,21 @@ export async function deleteTransaction(documentId) {
     throw new Error("Error deleting transaction", error);
   }
 }
+export async function deleteUser(documentId) {
+  console.log(documentId);
+  try {
+    const { database } = await createAdminClient();
+    const response = await database.deleteDocument(
+      process.env.APPWRITE_DATABASE_ID,
+      process.env.APPWRITE_USERS_ID,
+      documentId
+    );
+    revalidatePath("/account");
+    return response;
+  } catch (error) {
+    throw new Error("Error deleting transaction", error);
+  }
+}
 export async function getTransactions() {
   try {
     const { database } = await createAdminClient();
@@ -217,8 +244,7 @@ export async function getNotificationsByRecieversId(id) {
       process.env.APPWRITE_NOTIFICATIONS_ID,
       [Query.equal("recieverId", id)]
     );
-    // revalidatePath("/dashboard");
-    // revalidatePath("/transfer");
+
     return parseStringify(notifications.documents);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);
@@ -249,8 +275,6 @@ export async function getNotificationsBySendersId(id) {
       [Query.equal("senderId", id)]
     );
 
-    // revalidatePath("/dashboard");
-    // revalidatePath("/transfer");
     return parseStringify(notifications.documents);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);
