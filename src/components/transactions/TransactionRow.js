@@ -35,15 +35,16 @@ export default function TransactionRow({
             else return "";
           })
         ) : (
-          <Image
-            src={transaction.img ? transaction.img : userImg}
-            alt="apex-logo"
-            className={`rounded-full ${
-              transaction.name === "Apex" && "bg-buttonOrange p-0.5"
-            }`}
-            width={20}
-            height={20}
-          />
+          <div className="relative aspect-auto w-[20px] h-[20px]">
+            <Image
+              src={transaction.img ? transaction.img : userImg}
+              alt="apex-logo"
+              className={`rounded-full object-cover object-center ${
+                transaction.name === "Apex" && "bg-buttonOrange p-0.5"
+              }`}
+              fill
+            />
+          </div>
         )}
         <p className="md:hidden">{transaction.name.split(" ").at(0)}</p>
         <p className="hidden md:block">{transaction.name}</p>

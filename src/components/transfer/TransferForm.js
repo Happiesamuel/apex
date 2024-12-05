@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,16 +7,30 @@ import { Form } from "@/components/ui/form";
 import { useState, useEffect } from "react";
 import { getUsers } from "@/lib/action";
 import { Toast } from "@/lib/utils";
-import Popup from "../ui/Popup";
 import TransferFormField from "./TransferFormField";
 import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { useCreateTransaction } from "@/hooks/useCreateTransaction";
 import { useCreateNotification } from "@/hooks/useCreateNotification";
+import PinDialog from "./PinDialog";
 const formSchema = z.object({
   username: z.string().min(2),
   amount: z.string().min(2).max(10),
-  pin: z.string().min(4).max(10),
-  accountNumber: z.string().min(8).max(10),
+  pin: z
+    .string()
+    .min(2, {
+      message: "Pin must be at least 2 digit.",
+    })
+    .max(4, {
+      message: "Pin must be at least 4 digit.",
+    }),
+  accountNumber: z
+    .string()
+    .min(10, {
+      message: "Account number must be at  10 digit.",
+    })
+    .max(10, {
+      message: "Account number must be at  10 digit.",
+    }),
 });
 
 export default function TransferForm({ setId, userAcc }) {
@@ -25,7 +38,6 @@ export default function TransferForm({ setId, userAcc }) {
   const { createTransaction, status: transtStatus } = useCreateTransaction();
   const { createNotification } = useCreateNotification();
   const [value, setValue] = useState("");
-  const [transferring, setTransfering] = useState(false);
   const [amountVal, setAmountVal] = useState("");
   const [user, setUser] = useState({});
   const [load, setLoad] = useState(false);
@@ -86,109 +98,126 @@ export default function TransferForm({ setId, userAcc }) {
         });
       }
       if (+values.amount < 1)
-        returnToast({
+        return Toast({
           title: "Invalid amount",
           description: `Please enter a correct amount`,
         });
-
+      if (!userAcc.pin)
+        Toast({
+          title: "PIN ERROR!",
+          description: `You've not set your trasaction pin. Go to settings to set your transfer pin.`,
+        });
+      if (+values.pin !== userAcc.pin)
+        Toast({
+          title: "Wrong PIN!",
+          description: `The pin you entered is incorrect!.`,
+        });
       //  2410170648
       //  2410170620
-
-      updateUser(
-        {
-          id: userAcc["$id"],
-          obj: {
-            totalBalance: userAcc.totalBalance - +values.amount,
-          },
-        },
-        {
-          onError: () =>
-            Toast({
-              description: `failed to send funds to ${user.fullName}`,
-              title: "Unsuccessful",
-            }),
-          onSuccess: () =>
-            Toast({
-              title: "Debited!",
-              description: `You've sent $${values.amount} to ${user.fullName}`,
-            }),
-        }
-      );
-      createTransaction({
-        amount: +values.amount,
-        credId: user["$id"],
-        depId: userAcc["$id"],
-        status: "deposit",
-        depImg: userAcc.image,
-        credName: user.fullName,
-        depName: userAcc.fullName,
-      }),
-        updateUser({
-          id: user["$id"],
-          obj: {
-            totalBalance: user.totalBalance + +values.amount,
-          },
-        });
-      createTransaction({
-        amount: +values.amount,
-        credId: user["$id"],
-        depId: userAcc["$id"],
-        status: "withdrawal",
-        credImg: user.image,
-        credName: user.fullName,
-        depName: userAcc.fullName,
-      }),
-        createNotification({
-          title: "Withdrawal",
-          message: `You sent $${+values.amount} to ${user.fullName}`,
-          senderName: userAcc.fullName,
-          image: user.image,
-          status: false,
-          senderId: userAcc["$id"],
-          recieverId: user["$id"],
-          recieverName: user.fullName,
-        }),
-        createNotification(
+      else {
+        updateUser(
           {
-            title: "Deposit",
-            message: `You recieved $${+values.amount} from ${userAcc.fullName}`,
-            senderName: userAcc.fullName,
-            image: userAcc.image,
-            status: false,
-            senderId: userAcc["$id"],
-            recieverId: user["$id"],
-            recieverName: user.fullName,
+            id: userAcc["$id"],
+            obj: {
+              totalBalance: userAcc.totalBalance - +values.amount,
+            },
           },
           {
             onError: () =>
               Toast({
-                description:
-                  "failed to create notificatiion for this transaction!",
-                title: "Notification error",
+                description: `failed to send funds to ${user.fullName}`,
+                title: "Unsuccessful",
               }),
-            onSuccess: () =>
+            onSuccess: () => {
+              form.reset();
               Toast({
-                title: "Notification",
-                description: `1 new notification!`,
-              }),
+                title: "Debited!",
+                description: `You've sent $${values.amount} to ${user.fullName}`,
+              });
+            },
           }
-        ),
-        setUser({ ...user, totalBalance: user.totalBalance + +values.amount });
-      setValue("");
-      setAmountVal("");
-      Toast({
-        title: "Tranfer successfully",
-        description: `You've sucessfully transfered $${values.amount} to ${user.fullName}`,
-      });
+        );
+        createTransaction({
+          amount: +values.amount,
+          credId: user["$id"],
+          depId: userAcc["$id"],
+          status: "deposit",
+          depImg: userAcc.image,
+          credName: user.fullName,
+          depName: userAcc.fullName,
+        }),
+          updateUser({
+            id: user["$id"],
+            obj: {
+              totalBalance: user.totalBalance + +values.amount,
+            },
+          });
+        createTransaction({
+          amount: +values.amount,
+          credId: user["$id"],
+          depId: userAcc["$id"],
+          status: "withdrawal",
+          credImg: user.image,
+          credName: user.fullName,
+          depName: userAcc.fullName,
+        }),
+          createNotification({
+            title: "Withdrawal",
+            message: `You sent $${+values.amount} to ${user.fullName}`,
+            senderName: userAcc.fullName,
+            image: user.image,
+            status: false,
+            senderId: userAcc["$id"],
+            recieverId: user["$id"],
+            recieverName: user.fullName,
+          }),
+          createNotification(
+            {
+              title: "Deposit",
+              message: `You recieved $${+values.amount} from ${
+                userAcc.fullName
+              }`,
+              senderName: userAcc.fullName,
+              image: userAcc.image,
+              status: false,
+              senderId: userAcc["$id"],
+              recieverId: user["$id"],
+              recieverName: user.fullName,
+            },
+            {
+              onError: () => {
+                form.reset();
+                Toast({
+                  description:
+                    "failed to create notificatiion for this transaction!",
+                  title: "Notification error",
+                });
+              },
+              onSuccess: () =>
+                Toast({
+                  title: "Notification",
+                  description: `1 new notification!`,
+                }),
+            }
+          ),
+          setUser({
+            ...user,
+            totalBalance: user.totalBalance + +values.amount,
+          });
+        setValue("");
+        setIsOpen(false);
+        setAmountVal("");
+        Toast({
+          title: "Tranfer successfully",
+          description: `You've sucessfully transfered $${values.amount} to ${user.fullName}`,
+        });
+      }
     } catch (err) {
-      setTransfering(false);
     } finally {
-      setTransfering(false);
+      setIsOpen(false);
     }
-
-    form.reset();
   }
-
+  console.log(user);
   return (
     <Form {...form}>
       <form className=" flex flex-col gap-4 px-3 py-3 my-3 mr-3">
@@ -235,22 +264,21 @@ export default function TransferForm({ setId, userAcc }) {
         </div>
 
         {isOpen && (
-          <Popup
-            open={true}
-            heading="Confirm pin"
+          <PinDialog
+            user={user}
+            open={isOpen}
             handleCancel={() => setIsOpen(false)}
             handleClick={form.handleSubmit(onSubmit)}
-            type
-            title={
-              <TransferFormField
-                name="pin"
-                disabled={false}
-                type="number"
-                form={form}
-                placeholder="Enter Pin"
-              />
-            }
-          />
+          >
+            <TransferFormField
+              user={user}
+              name="pin"
+              disabled={false}
+              type="number"
+              form={form}
+              placeholder="Enter Pin"
+            />
+          </PinDialog>
         )}
       </form>
     </Form>

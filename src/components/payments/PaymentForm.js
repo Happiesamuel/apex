@@ -17,7 +17,14 @@ const formSchema = z.object({
     message: "Username must be at least 2 characters.",
   }),
   amount: z.string().min(2),
-  pin: z.string().min(2),
+  pin: z
+    .string()
+    .min(2, {
+      message: "Pin must be at least 2 digit.",
+    })
+    .max(4, {
+      message: "Pin must be at least 4 digit.",
+    }),
 });
 
 export function PaymentForm({ payname, user }) {
@@ -37,14 +44,24 @@ export function PaymentForm({ payname, user }) {
   async function onSubmit(values) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 4000));
-      if (+values.amount > user.totalBalance) {
+      if (+values.amount > user.totalBalance)
         Toast({
           description: `You don't have enough funds to pay for your ${capitalizeWords(
             payCheck
           )} bills`,
           title: "Insufficent fund!",
         });
-      } else {
+      if (!user.pin)
+        Toast({
+          title: "PIN ERROR!",
+          description: `You've not set your trasaction pin. Go to settings to set your transfer pin.`,
+        });
+      if (+values.pin !== user.pin)
+        Toast({
+          title: "Wrong PIN!",
+          description: `The pin you entered is incorrect!.`,
+        });
+      else {
         updateUser(
           {
             id: user["$id"],
@@ -151,7 +168,7 @@ export function PaymentForm({ payname, user }) {
             form={form}
           />
           <PaymentInput
-            placeholder="e.g 12345"
+            placeholder="e.g 1234"
             name="pin"
             label="Pin"
             type="number"

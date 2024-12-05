@@ -13,9 +13,18 @@ import { Toast } from "@/lib/utils";
 import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { useCreateTransaction } from "@/hooks/useCreateTransaction";
 import { useCreateNotification } from "@/hooks/useCreateNotification";
+import PinDialog from "./PinDialog";
 
 const formSchema = z.object({
   amount: z.string().min(2),
+  pin: z
+    .string()
+    .min(2, {
+      message: "Pin must be at least 2 digit.",
+    })
+    .max(4, {
+      message: "Pin must be at least 4 digit.",
+    }),
 });
 
 export default function RequestForm({ setId, user }) {
@@ -48,6 +57,16 @@ export default function RequestForm({ setId, user }) {
           title: "Request Failed",
           description: `Your account balance is too low to borrow money from Apex.`,
         });
+      if (!user.pin)
+        Toast({
+          title: "PIN ERROR!",
+          description: `You've not set your trasaction pin. Go to settings to set your transfer pin.`,
+        });
+      if (+values.pin !== user.pin)
+        Toast({
+          title: "Wrong PIN!",
+          description: `The pin you entered is incorrect!.`,
+        });
       else {
         updateUser(
           {
@@ -62,11 +81,13 @@ export default function RequestForm({ setId, user }) {
                 description: "failed to get loan from Apex!",
                 title: "Unsuccessful",
               }),
-            onSuccess: () =>
+            onSuccess: () => {
+              form.reset();
               Toast({
                 title: "Credited!",
                 description: `You've been credited $${values.amount} from Apex`,
-              }),
+              });
+            },
           }
         );
         createTransaction({
@@ -96,18 +117,19 @@ export default function RequestForm({ setId, user }) {
                     "failed to create notificatiion for this transaction!",
                   title: "Notification error",
                 }),
-              onSuccess: () =>
+              onSuccess: () => {
+                form.reset();
                 Toast({
                   title: "Notification",
                   description: `1 new notification!`,
-                }),
+                });
+              },
             }
           ),
           setValue("");
+        setIsOpen(false);
       }
     } catch (error) {}
-
-    form.reset();
   }
   return (
     <Form {...form}>
@@ -137,21 +159,21 @@ export default function RequestForm({ setId, user }) {
           </Button>
         </div>
         {isOpen && (
-          <Popup
-            open={true}
-            heading="Confirm pin"
+          <PinDialog
+            user={user}
+            open={isOpen}
             handleCancel={() => setIsOpen(false)}
             handleClick={form.handleSubmit(onSubmit)}
-            title={
-              <TransferFormField
-                name="pin"
-                disabled={false}
-                type="number"
-                form={form}
-                placeholder="Enter Pin"
-              />
-            }
-          />
+          >
+            <TransferFormField
+              user={user}
+              name="pin"
+              disabled={false}
+              type="number"
+              form={form}
+              placeholder="Enter Pin"
+            />
+          </PinDialog>
         )}
       </form>
     </Form>

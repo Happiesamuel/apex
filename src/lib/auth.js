@@ -63,6 +63,8 @@ const authConfig = {
             totalBalance: 0,
             image: user.image,
             nationality: "",
+            pin: "",
+            displayName: "",
           });
         } else {
           await createNotification({

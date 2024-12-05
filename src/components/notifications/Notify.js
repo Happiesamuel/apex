@@ -52,15 +52,24 @@ function Notify({ arrSplit, findArr, checked }) {
               >
                 <div className="flex gap-3 items-center">
                   {!findArr.some((x) => x.title === notArr.name) ? (
-                    <Image
-                      src={notArr.img ? notArr.img : userImg}
-                      width={40}
-                      height={40}
-                      className={`rounded-full ${
-                        notArr.name === "Apex" && "bg-buttonOrange p-2"
-                      }`}
-                      alt="img"
-                    />
+                    <div
+                      className={
+                        notArr.name === "Apex"
+                          ? ""
+                          : "w-[40px] h-[40px] relative aspect-auto"
+                      }
+                    >
+                      <Image
+                        src={notArr.img ? notArr.img : userImg}
+                        fill={notArr.name === "Apex" ? false : true}
+                        width={notArr.name === "Apex" ? 40 : ""}
+                        height={notArr.name === "Apex" ? 40 : ""}
+                        className={`rounded-full object-cover object-center ${
+                          notArr.name === "Apex" && "bg-buttonOrange p-2 "
+                        }`}
+                        alt="img"
+                      />
+                    </div>
                   ) : (
                     findArr.map((bill) => {
                       if (bill.title === notArr.name)

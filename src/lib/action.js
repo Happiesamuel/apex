@@ -76,17 +76,34 @@ export const getUsersById = async (id) => {
 };
 export async function updateUser(documentId, obj) {
   try {
-    const { database } = await createAdminClient();
-    const response = await database.updateDocument(
-      process.env.APPWRITE_DATABASE_ID,
-      process.env.APPWRITE_USERS_ID,
-      documentId,
-      obj
-    );
+    if (Object.keys(obj).at(0) !== "image") {
+      const { database } = await createAdminClient();
+      const response = await database.updateDocument(
+        process.env.APPWRITE_DATABASE_ID,
+        process.env.APPWRITE_USERS_ID,
+        documentId,
+        obj
+      );
 
-    revalidatePath("/account");
-    // revalidatePath("/transfer");
-    return parseStringify(response);
+      revalidatePath("/account");
+      return parseStringify(response);
+    } else {
+      const { storage, database } = await createAdminClient();
+      const data = await storage.createFile(
+        process.env.APPWRITE_BUCKET_ID,
+        ID.unique(),
+        obj.image
+      );
+      const fileUrl = `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${data.$id}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}&project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}&mode=admin`;
+      const response = await database.updateDocument(
+        process.env.APPWRITE_DATABASE_ID,
+        process.env.APPWRITE_USERS_ID,
+        documentId,
+        { image: fileUrl }
+      );
+      revalidatePath("/account");
+      return parseStringify(response);
+    }
   } catch (error) {
     throw new Error("Error updating document:", error.message);
   }

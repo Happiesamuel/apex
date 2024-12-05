@@ -54,7 +54,7 @@ export default async function RootLayout({ children }) {
         className={`${inter.variable} ${fredoka.className} grid grid-cols-1 md:grid md:grid-cols-[5rem_1fr] lg:grid-cols-[16rem_1fr] min-h-screen my-0 mx-auto max-w-[120rem] pt-3 md:pt-6  divide-x divide-zinc-900 bg-backgroundColor`}
       >
         <div className="hidden md:block relative">
-          <Sidebar user={session?.user} />
+          <Sidebar user={session?.user} userData={user} />
         </div>
         <div className=" md:hidden ">
           <MobileSidebar user={session?.user} />

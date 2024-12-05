@@ -2,6 +2,7 @@ import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 
 function TransferFormField({
+  user,
   form,
   placeholder,
   disabled,

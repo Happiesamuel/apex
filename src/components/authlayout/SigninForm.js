@@ -7,7 +7,7 @@ import apexLogo from "@/../public/asset/apex-logo.png";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import FormInput from "./FormInput";
-import { createUser, getUsersByEmail } from "@/lib/action";
+import { getUsersByEmail } from "@/lib/action";
 import { useState } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { formatRelativeTime, generateAccountNumber, Toast } from "@/lib/utils";
@@ -66,6 +66,8 @@ export function SigninForm({ type }) {
               countryFlag: "",
               nationality: "",
               image: "",
+              displayName: "",
+              pin: "",
             },
             {
               onSuccess: () =>

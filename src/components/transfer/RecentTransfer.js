@@ -93,15 +93,16 @@ export default function RecentTransfer({ user }) {
                       else return "";
                     })
                   ) : (
-                    <Image
-                      alt="recent name"
-                      src={recent.img ? recent.img : userImg}
-                      width={40}
-                      height={40}
-                      className={`rounded-full ${
-                        recent.name === "Apex" && "bg-buttonOrange p-2"
-                      }`}
-                    />
+                    <div className="w-[40px] h-[40px] relative aspect-auto">
+                      <Image
+                        alt="recent name"
+                        src={recent.img ? recent.img : userImg}
+                        fill
+                        className={`rounded-full object-cover object-center ${
+                          recent.name === "Apex" && "bg-buttonOrange p-2"
+                        }`}
+                      />
+                    </div>
                   )}
                   <p className="md:hidden text-xl text-zinc-200 font-[500]">
                     {recent.name.split(" ").at(0)}

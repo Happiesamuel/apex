@@ -9,6 +9,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "cloud.appwrite.io",
+        port: "",
+      },
+      {
+        protocol: "https",
         hostname: "platform-lookaside.fbsbx.com",
         port: "",
       },
