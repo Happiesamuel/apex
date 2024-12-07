@@ -184,6 +184,7 @@ export function SigninForm({ type }) {
       setLoading(false);
     }
     // form.reset();
+    // router.push("/account");
   }
 
   return (

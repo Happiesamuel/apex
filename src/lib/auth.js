@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { createNotification, getUsersByEmail } from "./action";
-import { format } from "date-fns";
 
 const authConfig = {
   providers: [

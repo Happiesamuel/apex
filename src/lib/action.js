@@ -1,11 +1,9 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { ID, Query } from "node-appwrite";
 import { createAdminClient } from "./appwrite";
 import { parseStringify } from "./utils";
-import { object } from "zod";
 import { signIn, signOut } from "./auth";
 
 export async function getCountries() {
