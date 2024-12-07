@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function DashboardBills() {
   return (
-    <div className="text-zinc-100 w-full md:w-[30%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full">
+    <div className="text-zinc-100 w-full md:w-[40%] lg:w-[40%] xl:w-[30%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full">
       <div className="flex justify-between items-center">
         <h1 className="text-base text-zinc-300">Bill & Payment</h1>
         <Link href="/account/payments">

@@ -18,7 +18,8 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-
+import apexImg from "@/../public/asset/apex-logo.png";
+import Image from "next/image";
 const page = async () => {
   const queryClient = new QueryClient();
   const session = await auth();
@@ -42,7 +43,7 @@ const page = async () => {
         <DashboardBills />
       </div>
       <div className="flex flex-col gap-5 md:gap-2 justify-between items-center mt-5 pb-5 md:flex-row ">
-        <DashboardPieChart />
+        <DashboardPieChart user={user} />
         <HydrationBoundary state={dehydrate(queryClient)}>
           <DashboardTransaction user={user} />
         </HydrationBoundary>

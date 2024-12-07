@@ -12,7 +12,7 @@ const page = async () => {
   return (
     <div className="text-zinc-100 ">
       <div className="flex flex-col md:flex-row justify-between ">
-        <TransferBalance user={user} />
+        <TransferBalance user={user} type="payment" />
         <TransferCard user={user} />
       </div>
       <h3 className="text-xl text-zinc-200 my-3">Bills & Payments</h3>

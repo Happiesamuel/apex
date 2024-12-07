@@ -83,7 +83,6 @@ const authConfig = {
     async session({ session }) {
       try {
         const users = await getUsersByEmail(session.user.email);
-        console.log(session);
         session.user.userId = users.$id;
       } catch (error) {
         console.error("Error fetching user data:", error);

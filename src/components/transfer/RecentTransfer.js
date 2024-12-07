@@ -65,7 +65,7 @@ export default function RecentTransfer({ user }) {
             return (
               <div
                 key={recent.id}
-                className="grid grid-cols-[1fr_0.6fr_0.5fr] items-center justify-between mx-3 bg-[#212121]  border border-zinc-800  px-2 py-3 rounded-lg"
+                className="grid grid-cols-[1fr_0.6fr_0.5fr] items-center justify-between mx-1 bg-[#212121]  border border-zinc-800  px-2 py-3 rounded-lg"
               >
                 <div className="flex gap-3 items-center">
                   {findArr2.some((x) => x.title === recent.name) ? (

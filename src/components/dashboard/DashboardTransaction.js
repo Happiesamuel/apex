@@ -47,16 +47,22 @@ export default function DashboardTransaction({ user }) {
     ...new Set(findArr.flatMap((x) => bills.filter((y) => y.title === x))),
   ];
   return (
-    <div className="text-zinc-100 w-full md:w-[68%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full mb-8 md:mb-0 min-h-[180px]">
+    <div className="text-zinc-100 w-full md:w-[60%] bg-bgBlur border border-zinc-800 rounded-3xl py-3 px-4 h-full mb-8 md:mb-0 min-h-[180px]">
       <div>
         <div className="flex justify-between items-center">
-          <h1 className="text-base text-zinc-300">Bill & Payment</h1>
+          <h1
+            className={`text-base text-zinc-300  ${
+              !transactions.length && "hidden"
+            }`}
+          >
+            Bill & Payment
+          </h1>
         </div>
       </div>
 
-      <ul className="mt-3 flex-col flex gap-2 mb-4">
+      <ul className="mt-6 flex-col flex gap-2 mb-4">
         {!transactions.length ? (
-          <div className="flex flex-col items-center justify-center h-[100px] gap-2">
+          <div className="flex flex-col items-center justify-center h-[100px] gap-4 pt-8">
             <div className="rounded-full bg-buttonOrange p-3 text-zinc-300">
               <TbReceiptOff className="text-2xl" />
             </div>

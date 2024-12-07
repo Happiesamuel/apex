@@ -95,11 +95,11 @@ export const cashFlowButtons = [
     id: 0,
   },
   {
-    title: "Expense",
+    title: "Outcome",
     id: 1,
   },
   {
-    title: "Savings",
+    title: "Bills & Payments",
     id: 2,
   },
 ];

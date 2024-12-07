@@ -7,9 +7,11 @@ import {
   format,
   formatDistanceToNow,
   formatDistanceToNowStrict,
+  isSameWeek,
   isToday,
   isYesterday,
   parseISO,
+  startOfWeek,
 } from "date-fns";
 
 export function cn(...inputs) {
@@ -157,4 +159,86 @@ export function allNotifications(notifications, user, type) {
     (a, b) => isoToTimestamp(b["$createdAt"]) - isoToTimestamp(a["$createdAt"])
   );
   return newArr;
+}
+export function reducedArr(arr) {
+  return arr.reduce((a, b) => a + b);
+}
+
+function addOrdinalSuffix(day) {
+  const suffixes = ["th", "st", "nd", "rd"];
+  const value = day % 100;
+  return day + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+}
+
+export function formatChartDate(x, type) {
+  const date = new Date(x);
+  const day = format(date, "d"); // Get the day of the month
+  const month = format(date, "MMM"); // Get the short month name
+
+  const formattedDate =
+    type === "monthly"
+      ? `${month}`
+      : `${addOrdinalSuffix(Number(day))} ${month}`;
+  return formattedDate;
+}
+
+export function dayOfWeek(day) {
+  const date = new Date(day);
+  const dayOfWeek = format(date, "EEEE");
+
+  return dayOfWeek;
+}
+export function calcSlice(transactions, val) {
+  return transactions.map((x) => {
+    if (val === "daily") {
+      return x.data.slice(0, 10); // YYYY-MM-DD
+    } else if (val === "monthly") {
+      return x.data.slice(0, 7); // YYYY-MM
+    } else if (val === "weekly") {
+      return x.data.slice(); // Format the week's start date
+    } else {
+      return x.data.slice(0, 2); // Default case (example purpose)
+    }
+  });
+}
+
+// Group dates by week and assign unique numbers
+export function modifyTransaction(transactions) {
+  const result = transactions
+    .map((x) => x.date)
+    .reduce((acc, date) => {
+      const currentDate = parseISO(date);
+      let weekNumber = -1;
+
+      // Check if the date belongs to an existing group
+      acc.forEach((group, index) => {
+        if (
+          isSameWeek(currentDate, parseISO(group.dates[0]), { weekStartsOn: 0 })
+        ) {
+          weekNumber = index; // Assign the current group index as the week number
+        }
+      });
+
+      // If not in any existing group, create a new group
+      if (weekNumber === -1) {
+        weekNumber = acc.length;
+        acc.push({ weekNumber, dates: [date] });
+      } else {
+        acc[weekNumber].dates.push(date);
+      }
+
+      return acc;
+    }, []);
+
+  // Append the week number to each date
+  const updatedDates = result.flatMap((group) =>
+    group.dates.map((date) => {
+      return `${date.slice(0, 10)}%${group.weekNumber + 1}${date.slice(10)}`;
+    })
+  );
+
+  return transactions.map((x) => {
+    const a = updatedDates.find((y) => y.startsWith(x.date.slice(0, 10)));
+    return { ...x, data: a };
+  });
 }

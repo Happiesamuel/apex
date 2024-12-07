@@ -1,14 +1,22 @@
 "use client";
+import { useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
 
-const data = [
-  { name: "Daily Needs", value: 200 },
-  { name: "Savings", value: 50 },
-  { name: "Shopping", value: 100 },
-];
 const COLORS = ["#b91c1c", "#d97706", "#c2410c"];
 
-export default function DashboardPieCharts() {
+export default function DashboardPieCharts({ pieData, day, setDay, val }) {
+  useEffect(
+    function () {
+      setDay(pieData.at(0).date);
+    },
+    [val]
+  );
+  const datas = pieData?.find((x) => x.date === day)?.arr ?? [];
+  const data = [
+    { name: "Income", value: datas.income },
+    { name: "Outcome", value: datas.outcome },
+    { name: "Bills & Payment", value: datas.payment },
+  ];
   return (
     <ResponsiveContainer width="100%">
       <PieChart width={10} height={0}>

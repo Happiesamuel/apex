@@ -11,7 +11,6 @@ export function useCreateTransaction() {
     onSuccess: () => {
       queryClient.invalidateQueries({ active: true });
       queryClient.invalidateQueries({ queryKey: ["creditTransactions"] });
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["debitTransactions"] });
     },
     onError: (err) => {
