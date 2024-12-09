@@ -7,7 +7,7 @@ function TransactionHead({ type }) {
       <h1
         className={!type ? "text-base text-zinc-300" : "text-sm text-zinc-400"}
       >
-        Bill & Payment
+        Transaction History
       </h1>
       {!type && (
         <div className="flex gap-2 items-center">
