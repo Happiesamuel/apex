@@ -1,5 +1,5 @@
 import AuthButtonForm from "./AuthButtonForm";
-import { signInWithGoogleAction } from "@/lib/action";
+import { signInWithFacebookAction, signInWithGoogleAction } from "@/lib/action";
 
 function AuthOptions() {
   return (
@@ -28,7 +28,7 @@ function AuthOptions() {
           type="facebook"
           name="Facebook"
           color="#1d203b"
-          action={signInWithGoogleAction}
+          action={signInWithFacebookAction}
         />
       </div>
     </div>

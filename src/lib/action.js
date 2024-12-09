@@ -24,6 +24,9 @@ export async function signOutAction() {
 export async function signInWithGoogleAction() {
   await signIn("google", { redirectTo: "/account" });
 }
+export async function signInWithFacebookAction() {
+  await signIn("facebook", { redirectTo: "/account" });
+}
 export async function signInWithCredentials(data) {
   await signIn("credentials", data);
 }
