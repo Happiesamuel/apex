@@ -48,22 +48,22 @@ export default function RequestForm({ setId, user }) {
   async function onSubmit(values) {
     try {
       if (+values.amount < 1)
-        Toast({
+        return Toast({
           title: "Invalid amount",
           description: `Please enter a valid amount`,
         });
       if (user.totalBalance < 100 || +values.amount >= user.totalBalance)
-        Toast({
+        return Toast({
           title: "Request Failed",
           description: `Your account balance is too low to borrow money from Apex.`,
         });
       if (!user.pin)
-        Toast({
+        return Toast({
           title: "PIN ERROR!",
           description: `You've not set your trasaction pin. Go to settings to set your transfer pin.`,
         });
       if (+values.pin !== user.pin)
-        Toast({
+        return Toast({
           title: "Wrong PIN!",
           description: `The pin you entered is incorrect!.`,
         });
