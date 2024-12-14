@@ -53,10 +53,24 @@ export async function createUser(obj) {
       ID.unique(),
       obj
     );
-    console.log(newUser, "samfxh");
     return parseStringify(newUser);
   } catch (error) {
-    console.log(error);
+    throw new Error("Failed to fetch", error.message);
+  }
+}
+export async function createBill(obj) {
+  try {
+    const { database } = await createAdminClient();
+    const bill = await database.createDocument(
+      process.env.APPWRITE_DATABASE_ID,
+      process.env.APPWRITE_BILLS_ID,
+      ID.unique(),
+      obj
+    );
+    revalidatePath("/account");
+    return parseStringify(bill);
+  } catch (error) {
+    throw new Error("Failed to fetch", error.message);
   }
 }
 export const getUsersByEmail = async (email) => {
@@ -70,7 +84,7 @@ export const getUsersByEmail = async (email) => {
     );
     return parseStringify(user.documents.at(0));
   } catch (error) {
-    console.log(error);
+    throw new Error("Failed to fetch", error.message);
   }
 };
 export const getUsersById = async (id) => {
@@ -84,7 +98,7 @@ export const getUsersById = async (id) => {
     );
     return parseStringify(user.documents.at(0));
   } catch (error) {
-    console.log(error);
+    throw new Error("Failed to fetch", error.message);
   }
 };
 export async function updateUser(documentId, obj) {
@@ -167,12 +181,25 @@ export async function deleteTransaction(documentId) {
   }
 }
 export async function deleteUser(documentId) {
-  console.log(documentId);
   try {
     const { database } = await createAdminClient();
     const response = await database.deleteDocument(
       process.env.APPWRITE_DATABASE_ID,
       process.env.APPWRITE_USERS_ID,
+      documentId
+    );
+    revalidatePath("/account");
+    return response;
+  } catch (error) {
+    throw new Error("Error deleting transaction", error);
+  }
+}
+export async function deleteBill(documentId) {
+  try {
+    const { database } = await createAdminClient();
+    const response = await database.deleteDocument(
+      process.env.APPWRITE_DATABASE_ID,
+      process.env.APPWRITE_BILLS_ID,
       documentId
     );
     revalidatePath("/account");
@@ -265,6 +292,20 @@ export async function getCreditTransaction(id) {
     throw new Error("Failed to fetch", error.message);
   }
 }
+export async function getBills(id) {
+  try {
+    const { database } = await createAdminClient();
+
+    const bill = await database.listDocuments(
+      process.env.APPWRITE_DATABASE_ID,
+      process.env.APPWRITE_BILLS_ID,
+      [Query.equal("userId", id)]
+    );
+    return parseStringify(bill.documents);
+  } catch (error) {
+    throw new Error("Failed to fetch", error.message);
+  }
+}
 
 export async function getNotificationsBySendersId(id) {
   try {
@@ -337,30 +378,5 @@ export async function deleteAllNotifications(id) {
     revalidatePath("/account");
   } catch (error) {
     throw new Error("Error deleting documents:", error);
-  }
-}
-
-export async function handleRecievePay(user) {
-  try {
-    await Promise.all([
-      updateUser(user["$id"], {
-        totalBalance: 500,
-        welcomePay: true,
-      }),
-      createNotification({
-        title: "Welcome",
-        message: `You've been credited $500 to start banking with us...You can transfer as well as pay some of your bills on Apex bank online and also request for loan if you need to pay or transfer urgently!`,
-        senderName: "Apex",
-        image: apexLogo.src,
-        status: false,
-        senderId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID,
-        recieverId: user["$id"],
-        recieverName: user.fullName,
-      }),
-    ]);
-    revalidatePath("/dashboard");
-  } catch (error) {
-    console.log(error);
-    // Toast({ description: "failed to claim", title: "Claiming failed" });
   }
 }

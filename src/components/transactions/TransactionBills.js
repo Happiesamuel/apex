@@ -80,7 +80,7 @@ function TransactionBills({ user }) {
   return (
     <Suspense key={page} fallback={<TransactionLoader />}>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-base text-zinc-300">Bill & Payment</h1>
+        <h1 className="text-base text-zinc-300">Transaction History</h1>
         <div className="flex gap-2 items-center">
           <HeaderInput val={val} setVal={setVal} />
           <div className="p-2 rounded-full  border border-zinc-800 ">

@@ -6,14 +6,14 @@ export default function App({ children }) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 0,
+        staleTime: 10,
       },
     },
   });
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
       {children}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

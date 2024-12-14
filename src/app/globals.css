@@ -1,7 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+html {
+  scroll-behavior: smooth;
+}
 .active_sidelink {
   background: linear-gradient(to right, #5c463b, #291d17, #0a0807, #040404);
   color: #d4d4d8;
@@ -10,6 +12,34 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+.section {
+  background: url("/asset/grid.png");
+  background-color: #9c7043;
+  background-position: center;
+  background-size: cover;
+}
+.nav {
+  background: url("/asset/grid.png");
+  background-color: black;
+  background-position: center;
+  background-size: cover;
+}
+.section-3 {
+  background: url("/asset/grid.png"),
+    linear-gradient(
+      180deg,
+      #281e15,
+      rgba(0, 0, 0, 0.5),
+      black,
+      rgba(0, 0, 0, 0.5),
+      black,
+      rgba(0, 0, 0, 0.5)
+    );
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+}
+
 .after {
   &::before,
   &::after {

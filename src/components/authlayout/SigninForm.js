@@ -110,7 +110,7 @@ export function SigninForm({ type }) {
               },
             }
           );
-          await new Promise((resolve) => setTimeout(resolve, 5000));
+          await new Promise((resolve) => setTimeout(resolve, 3000));
           router.push("/account");
         }
         createNotification(

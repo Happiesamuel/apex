@@ -104,6 +104,29 @@ export const cashFlowButtons = [
   },
 ];
 
+export const navbar = [
+  {
+    route: "#account_management",
+    id: 1,
+    name: "Account Mangement",
+  },
+  {
+    route: "#about_us",
+    id: 2,
+    name: " About Us",
+  },
+  {
+    route: "#my_card",
+    id: 3,
+    name: "My Card",
+  },
+
+  {
+    route: "#crypto",
+    id: 4,
+    name: "Crypto",
+  },
+];
 export const bills = [
   {
     title: "Shopping",

@@ -8,6 +8,7 @@ import DashboardTransaction from "@/components/dashboard/DashboardTransaction";
 import DashboardPieChart from "@/components/dashboard/DashboardPieChart";
 import { auth } from "@/lib/auth";
 import {
+  getBills,
   getCreditTransaction,
   getDebitTransaction,
   getUsersByEmail,
@@ -18,8 +19,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import apexImg from "@/../public/asset/apex-logo.png";
-import Image from "next/image";
+
 const page = async () => {
   const queryClient = new QueryClient();
   const session = await auth();
@@ -32,6 +32,10 @@ const page = async () => {
     queryKey: ["creditTransactions"],
     queryFn: async () => await getCreditTransaction(user?.$id),
   });
+  await queryClient.prefetchQuery({
+    queryKey: ["bills"],
+    queryFn: async () => await getBills(user?.$id),
+  });
   return (
     <section className="text-zinc-100 h-full">
       <h1 className="text-xl mt-3 mb-2">Accounts</h1>
@@ -40,7 +44,9 @@ const page = async () => {
       <DashboardIncome user={user} />
       <div className="flex flex-col w-full justify-between items-start mt-7 md:flex-row gap-6">
         <DashboardCashflow user={user} />
-        <DashboardBills />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <DashboardBills user={user} />
+        </HydrationBoundary>
       </div>
       <div className="flex flex-col gap-5 md:gap-2 justify-between items-center mt-5 pb-5 md:flex-row ">
         <DashboardPieChart user={user} />

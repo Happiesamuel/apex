@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export function useDeleteUser() {
   const queryClient = useQueryClient();
   const { mutate: deleteUser, status: deleteStatus } = useMutation({
-    mutationFn: (id) => deleteUserApi(id),
+    mutationFn: async (id) => await deleteUserApi(id),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
