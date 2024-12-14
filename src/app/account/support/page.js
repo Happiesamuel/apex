@@ -3,8 +3,11 @@ import FirstSupport from "@/components/support/FirstSupport";
 import FourthSupport from "@/components/support/FourthSupport";
 import SecondSupport from "@/components/support/SecondSupport";
 import ThirdSupport from "@/components/support/ThirdSupport";
-import Link from "next/link";
-
+export async function generateMetadata() {
+  return {
+    title: `Support`,
+  };
+}
 function page() {
   return (
     <div className="text-zinc-100">
