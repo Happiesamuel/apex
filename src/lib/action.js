@@ -76,13 +76,14 @@ export async function createBill(obj) {
 export const getUsersByEmail = async (email) => {
   try {
     const { database } = await createAdminClient();
-
     const user = await database.listDocuments(
       process.env.APPWRITE_DATABASE_ID,
       process.env.APPWRITE_USERS_ID,
       [Query.equal("email", email)]
     );
-    return parseStringify(user.documents.at(0));
+
+    // console.log(user.documents.at(0));
+    return user.documents.at(0);
   } catch (error) {
     throw new Error("Failed to fetch", error.message);
   }

@@ -40,14 +40,14 @@ export function SigninForm({ type }) {
   async function onSubmit(values) {
     setLoading(true);
     try {
+      const existedUser = await getUsersByEmail(values.email);
       if (type === "sign-up") {
-        const existedUser = await getUsersByEmail(values.email);
-        if (existedUser)
+        if (existedUser) {
           return Toast({
             title: "Account already existed",
             description: "You've created account with this email...",
           });
-        else {
+        } else {
           return createUser(
             {
               email: values.email,
