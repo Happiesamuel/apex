@@ -1,7 +1,11 @@
 import AuthOptions from "@/components/authlayout/AuthOptions";
 import { SigninForm } from "@/components/authlayout/SigninForm";
 import Link from "next/link";
-
+export async function generateMetadata() {
+  return {
+    title: `Sign in`,
+  };
+}
 function page() {
   return (
     <div className="w-[90%] md:w-[80%] mt-3">

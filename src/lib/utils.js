@@ -4,9 +4,13 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
   differenceInDays,
+  differenceInSeconds,
   format,
   formatDistanceToNow,
   formatDistanceToNowStrict,
+  getHours,
+  getMinutes,
+  getSeconds,
   isSameWeek,
   isToday,
   isYesterday,
@@ -241,4 +245,56 @@ export function modifyTransaction(transactions) {
     const a = updatedDates.find((y) => y.startsWith(x.date.slice(0, 10)));
     return { ...x, data: a };
   });
+}
+export function claimDate(day) {
+  const date = new Date(day);
+  const timezoneOffset = 0;
+
+  const utcDate = new Date(date.getTime() - timezoneOffset * 60 * 1000);
+
+  const formattedDate = format(utcDate, "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+  return formattedDate;
+}
+export function subtractDays(a, b) {
+  const date1 = parseISO(a);
+  const date2 = parseISO(b);
+
+  return differenceInSeconds(date1, date2);
+}
+
+export function formatClaimDate(dateString) {
+  const date = parseISO(dateString);
+
+  const hours = getHours(date); // 12
+  const minutes = getMinutes(date); // 36
+  const seconds = getSeconds(date); // 33
+
+  // Format the output as "00h:00m:00s"
+  const formattedTime = `${String(hours).padStart(2, "0")}h:${String(
+    minutes
+  ).padStart(2, "0")}m:${String(seconds).padStart(2, "0")}s`;
+
+  return formattedTime;
+}
+export function formatBack(dateString) {
+  // Create a Date object from the string
+  const date = new Date(dateString);
+  const formattedDate = date.toLocaleString("en-US", {
+    weekday: "short", // Abbreviated day of the week (e.g., "Sat")
+    year: "numeric", // Full year (e.g., "2024")
+    month: "short", // Abbreviated month name (e.g., "Dec")
+    day: "numeric", // Day of the month (e.g., "14")
+    hour: "2-digit", // Hour (2-digit format)
+    minute: "2-digit", // Minute (2-digit format)
+    second: "2-digit", // Second (2-digit format)
+    timeZoneName: "short", // Timezone abbreviation (e.g., "GMT+01:00")
+    timeZone: "Africa/Lagos", // Specify the timezone for West Africa Standard Time
+  });
+
+  const timeZoneOffset = date.toString().match(/([A-Z]+[+-][0-9]{4})/)[0];
+
+  // Combine to get the final format
+  const finalDate = `${formattedDate.replace(",", "")} ${timeZoneOffset}`;
+
+  return finalDate;
 }

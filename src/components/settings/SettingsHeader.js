@@ -1,6 +1,7 @@
 import Image from "next/image";
 import UserImg from "@/../public/asset/user-img.png";
 function SettingsHeader({ user }) {
+  const [country, flag] = user?.nationality?.split("%");
   return (
     <header className="flex flex-col items-center justify-center mt-12">
       <div className="relative aspect-auto w-[80px] h-[80px]">
@@ -15,13 +16,8 @@ function SettingsHeader({ user }) {
         <h1 className="text-xl">
           {user.displayName ? user.displayName : user.fullName}
         </h1>
-        {user?.countryFlag && (
-          <Image
-            src={user.countryFlag}
-            width={30}
-            height={30}
-            alt={`flag of ${user.nationality}`}
-          />
+        {flag && (
+          <Image src={flag} width={30} height={30} alt={`flag of ${country}`} />
         )}
       </div>
       <p className="text-sm text-zinc-400">{user.email}</p>

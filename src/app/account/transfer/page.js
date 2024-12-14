@@ -11,7 +11,11 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import React from "react";
-
+export async function generateMetadata() {
+  return {
+    title: `Transfer funds & Request loan`,
+  };
+}
 const page = async () => {
   const queryClient = new QueryClient();
   const session = await auth();

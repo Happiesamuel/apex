@@ -56,7 +56,7 @@ export function SigninForm({ type }) {
               accountNumber: generateAccountNumber(),
               totalBalance: 0,
               welcomePay: false,
-              countryFlag: "",
+              claimDate: "",
               nationality: "",
               image: "",
               displayName: "",
@@ -112,6 +112,7 @@ export function SigninForm({ type }) {
           );
           await new Promise((resolve) => setTimeout(resolve, 3000));
           router.push("/account");
+          router.replace("/account");
         }
         createNotification(
           {

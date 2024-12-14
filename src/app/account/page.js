@@ -19,7 +19,11 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-
+export async function generateMetadata() {
+  return {
+    title: `Dashboard`,
+  };
+}
 const page = async () => {
   const queryClient = new QueryClient();
   const session = await auth();

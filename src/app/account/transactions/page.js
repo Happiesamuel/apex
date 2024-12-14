@@ -14,7 +14,11 @@ import {
   getDebitTransaction,
   getUsersByEmail,
 } from "@/lib/action";
-
+export async function generateMetadata() {
+  return {
+    title: `Transaction History`,
+  };
+}
 const page = async () => {
   const queryClient = new QueryClient();
   const session = await auth();

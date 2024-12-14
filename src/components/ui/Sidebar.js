@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 
 const Sidebar = ({ user, userData }) => {
+  const [country, flag] = userData?.nationality?.split("%");
   return (
     <aside className=" h-full bank_sidebar mx-4 text-zinc-200">
       <div className="flex gap-3 items-center">
@@ -44,12 +45,12 @@ const Sidebar = ({ user, userData }) => {
               <h3 className="text-base">
                 {userData.displayName ? userData.displayName : user.name}
               </h3>
-              {userData?.countryFlag && (
+              {flag && (
                 <Image
-                  src={userData?.countryFlag}
+                  src={flag}
                   width={20}
                   height={20}
-                  alt={`flag of ${user.nationality}`}
+                  alt={`flag of ${country}`}
                 />
               )}
             </div>

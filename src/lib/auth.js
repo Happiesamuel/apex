@@ -56,7 +56,7 @@ const authConfig = {
           await createUser({
             email: user.email,
             fullName: user.name,
-            countryFlag: "",
+            claimDate: "",
             password: "",
             welcomePay: false,
             accountNumber: generateAccountNumber(),

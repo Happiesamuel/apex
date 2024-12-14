@@ -10,7 +10,7 @@ function error({ error, reset }) {
         <MdOutlineWifiOff />
       </div>
       <p className="text-zinc-200 text-lg">{error.message}</p>
-      <p className="text-zinc-400 text-sm">
+      <p className="text-zinc-400 text-sm text-center">
         You&apos;re probably having a bad internet connection. Check your
         internet connection.
       </p>

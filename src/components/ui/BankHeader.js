@@ -28,7 +28,7 @@ export default function BankHeader({ user }) {
 
   if (recieverStatus === "pending" || senderStatus === "pending")
     return (
-      <BankHeaderTwo active={active}>
+      <BankHeaderTwo user={user} active={active}>
         <ClipLoader color="#ea763d" size={20} />
       </BankHeaderTwo>
     );
@@ -50,7 +50,7 @@ export default function BankHeader({ user }) {
   });
 
   return (
-    <BankHeaderTwo active={active}>
+    <BankHeaderTwo user={user} active={active}>
       <Link href="/account/notifications" className="relative">
         <IoMdNotificationsOutline className="text-xl" />
         {notify.some((x) => !x.status) && (

@@ -67,11 +67,10 @@ html {
   background: linear-gradient(to right, #5c463b, #291d17, #291d17, #5c463b);
 }
 @layer utilities {
-  .bank_header {
-    @apply w-full h-[6%] md:h-[8%] flex justify-between items-center pb-3;
-  }
-  .bank_content {
-    @apply;
+  @layer utilities {
+    .bank_header {
+      @apply w-full h-[50px] md:h-[8%] flex justify-between items-center pb-3;
+    }
   }
 }
 @layer base {

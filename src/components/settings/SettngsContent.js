@@ -12,6 +12,7 @@ import DeleteAccountModal from "./DeleteAccountModal";
 
 async function SettngsContent({ user }) {
   const countries = await getCountries();
+  const [country, flag] = user?.nationality?.split("%");
   return (
     <div className="mt-10 pb-20 gap-4 grid  grid-cols-1 gap-y-5 md:grid-cols-2 items-center">
       <Setter
@@ -33,15 +34,15 @@ async function SettngsContent({ user }) {
         title="Set Country"
         content={
           <div className="flex items-center gap-1">
-            {user.countryFlag && (
+            {flag && (
               <Image
-                src={user.countryFlag}
+                src={flag}
                 width={20}
                 height={20}
-                alt={`flag of ${user.nationality}`}
+                alt={`flag of ${country}`}
               />
             )}
-            <p>{user.nationality}</p>
+            <p>{country}</p>
           </div>
         }
       >

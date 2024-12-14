@@ -9,7 +9,7 @@ function Navbar() {
       <div className="flex gap-10 items-center">
         <div className="flex items-center gap-1">
           <Image alt="logo" width={40} height={40} src={LOGO} />
-          <h1 className="text-base font-semibold">Apex</h1>
+          {/* <h1 className="text-base font-semibold">Apex</h1> */}
         </div>
         <div className="flex gap-8 items-center">
           {navbar.map((nav) => (

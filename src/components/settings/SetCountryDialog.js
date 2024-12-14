@@ -44,7 +44,8 @@ const formSchema = z.object({
 function SetCountryDialog({ user, countries }) {
   const { updateUser, status } = useUpdateUser();
   const { createNotification } = useCreateNotification();
-  const def = countries?.find((x) => x.name === user.nationality) ?? "";
+  const [country, flag] = user?.nationality?.split("%");
+  const def = countries?.find((x) => x.name === country) ?? "";
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,8 +58,7 @@ function SetCountryDialog({ user, countries }) {
       {
         id: user["$id"],
         obj: {
-          nationality: country,
-          countryFlag: flag,
+          nationality: `${country}%${flag}`,
         },
       },
       {
