@@ -51,8 +51,7 @@ const authConfig = {
     async signIn({ user }) {
       try {
         const existedUser = await getUsersByEmail(user.email);
-
-        if (!existedUser) {
+        if (!existedUser.email) {
           await createUser({
             email: user.email,
             fullName: user.name,

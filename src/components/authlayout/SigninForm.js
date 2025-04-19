@@ -82,6 +82,7 @@ export function SigninForm({ type }) {
       }
       if (type === "sign-in") {
         const existedUser = await getUsersByEmail(values.email);
+        console.log(existedUser)
         if (!existedUser)
           return Toast({
             description: "Invalid credentials",
