@@ -5,6 +5,7 @@ import LogImg from "@/../public/asset/sign.png";
 import AuthHeader from "@/components/authlayout/AuthHeader";
 import { Toaster } from "@/components/ui/toaster";
 import dynamic from "next/dynamic";
+import { useGetAuth } from "@/hooks/useGetAuth";
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -24,6 +25,17 @@ export default function RootLayout({ children }) {
         <div className="flex flex-col items-center justify-center w-full md:w-[50%] mx-4">
           <AuthHeader />
           {children}
+          <div className=" w-full mt-4">
+            <h3 className="text-sm pb-1">Test Credentials</h3>
+            <div className="flex items-center text-sm gap-2">
+              <p>Email:</p>
+              <p>Jane@gmail.com</p>
+            </div>
+            <div className="flex items-center text-sm gap-2">
+              <p>Password:</p>
+              <p>2222222222</p>
+            </div>
+          </div>
         </div>
 
         <div className="hidden md:block h-full w-[50%]  relative aspect-square">
